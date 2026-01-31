@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualités - Le Centre de Remise en Joie</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .actualites-header {
+            background: linear-gradient(rgba(44, 85, 48, 0.8), rgba(44, 85, 48, 0.8)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23e8f5e8"/><path d="M0 0h100v100H0z" fill="none" stroke="%23c8e6c9" stroke-width="0.5"/></svg>');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 6rem 2rem 4rem 2rem;
+            text-align: center;
+        }
+        
+        .actualites-header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+        
+        .actualites-header p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .actualites-main {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+        
+        .actualites-list {
+            display: grid;
+            gap: 3rem;
+        }
+        
+        .actualite-full {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .actualite-full:hover {
+            transform: translateY(-2px);
+        }
+        
+        .actualite-full img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        
+        .actualite-full-content {
+            padding: 2rem;
+        }
+        
+        .actualite-full-date {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .actualite-full-titre {
+            font-size: 1.8rem;
+            color: #2c5530;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+        
+        .actualite-full-contenu {
+            color: #555;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        
+        .retour-accueil {
+            display: inline-block;
+            margin: 2rem 0;
+            padding: 1rem 2rem;
+            background-color: #2c5530;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .retour-accueil:hover {
+            background-color: #1e3a22;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin: 3rem 0;
+        }
+        
+        .pagination button {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid #2c5530;
+            background-color: white;
+            color: #2c5530;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .pagination button:hover,
+        .pagination button.active {
+            background-color: #2c5530;
+            color: white;
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .facebook-integration {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 3rem 0;
+            text-align: center;
+        }
+        
+        .facebook-integration h3 {
+            color: #2c5530;
+            margin-bottom: 1rem;
+        }
+        
+        .facebook-integration p {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .facebook-link {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: #1877f2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .facebook-link:hover {
+            background-color: #166fe5;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1>Le Centre de Remise en Joie</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="index.html#reservation">Réservation</a></li>
+                <li><a href="actualites.html">Actualités</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="actualites-header">
+        <h1>Toutes nos actualités</h1>
+        <p>Découvrez toutes les nouvelles du Centre de Remise en Joie et restez informé de nos dernières activités et événements.</p>
+    </div>
+
+    <div class="actualites-main">
+        <a href="index.html" class="retour-accueil">← Retour à l'accueil</a>
+        
+        <div class="actualites-list" id="actualitesListe">
+            <!-- Les actualités seront chargées dynamiquement -->
+        </div>
+        
+        <div class="pagination" id="pagination">
+            <!-- La pagination sera générée dynamiquement -->
+        </div>
+        
+        <div class="facebook-integration">
+            <h3>Suivez-nous sur Facebook</h3>
+            <p>Retrouvez également nos actualités et nos moments de partage sur notre page Facebook officielle.</p>
+            <a href="https://facebook.com/chaletananda" class="facebook-link" target="_blank">Visiter notre page Facebook</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Le Centre de Remise en Joie. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        // Extended news data with more articles
+        const allNews = [
+            {
+                id: 1,
+                titre: "Nouveau programme de méditation",
+                date: "2024-01-15",
+                contenu: "Nous sommes ravis de vous présenter notre nouveau programme de méditation en pleine conscience, spécialement conçu pour vous accompagner dans votre quête de sérénité et d'équilibre intérieur. Ce programme s'adresse à tous, débutants comme pratiquants expérimentés, et vous propose une approche progressive et bienveillante de la méditation. Nos séances se déroulent dans un cadre exceptionnel, au cœur du Parc naturel régional des volcans d'Auvergne, où la beauté de la nature favorise naturellement le recueillement et la connexion à soi. Chaque session allie techniques traditionnelles et approches contemporaines, dans le respect des rythmes de chacun.",
+                image: "images/meditation.jpg"
+            },
+            {
+                id: 2,
+                titre: "Ateliers yoga printaniers",
+                date: "2024-01-10",
+                contenu: "Le printemps approche et avec lui, l'éveil de la nature qui nous entoure. C'est le moment idéal pour rejoindre nos ateliers de yoga spécialement conçus pour cette saison de renouveau. Ces séances uniques vous invitent à vous reconnecter à votre corps et à votre souffle, en harmonie avec l'énergie printanière qui émane de nos volcans d'Auvergne. Nos instructeurs certifiés vous guideront à travers des pratiques douces et énergisantes, adaptées à tous les niveaux. Les ateliers se déroulent dans notre magnifique salle de pratique avec vue panoramique sur les monts d'Auvergne, créant une atmosphère propice à l'épanouissement personnel et au bien-être.",
+                image: "images/yoga.jpg"
+            },
+            {
+                id: 3,
+                titre: "Journée portes ouvertes",
+                date: "2024-01-05",
+                contenu: "Venez découvrir l'univers unique du Centre de Remise en Joie lors de notre journée portes ouvertes, organisée chaque premier samedi du mois. Cette journée spéciale vous permet de visiter nos installations, de rencontrer notre équipe passionnée et de découvrir l'ensemble de nos services dans une ambiance conviviale et détendue. Vous pourrez participer à des démonstrations de nos activités, déguster nos préparations biologiques locales, et échanger avec d'anciens participants qui partageront leurs expériences transformatrices. C'est l'occasion idéale pour poser toutes vos questions et sentir l'atmosphère bienveillante qui règne dans notre centre. L'entrée est libre et un accueil chaleureux vous attend.",
+                image: "images/centre-ouvert.jpg"
+            },
+            {
+                id: 4,
+                titre: "Randonnée bien-être",
+                date: "2024-01-01",
+                contenu: "Immergez-vous dans la beauté sauvage du Parc naturel régional des volcans d'Auvergne grâce à nos randonnées bien-être. Ces sorties exceptionnelles combinent marche consciente, exercices de respiration et moments de méditation en pleine nature. Accompagnés par nos guides expérimentés, vous découvrirez des paysages à couper le souffle tout en pratiquant des techniques de relaxation et de connexion à l'environnement naturel. Chaque randonnée est adaptée au niveau du groupe et ponctuée de pauses contemplatives près des lacs volcaniques, des cascades ou sur les sommets offrant des panoramas exceptionnels. Ces moments privilégiés vous permettront de faire le plein d'énergie positive et de renouer avec l'essentiel.",
+                image: "images/randonnee.jpg"
+            },
+            {
+                id: 5,
+                titre: "Atelier cuisine consciente",
+                date: "2023-12-20",
+                contenu: "Découvrez l'art de la cuisine consciente dans nos ateliers culinaires où chaque geste devient une méditation. Nous vous apprenons à préparer des repas sains et savoureux en utilisant exclusivement des produits locaux et biologiques issus de notre région auvergnate. Ces ateliers interactifs vous sensibilisent à l'importance d'une alimentation mindful, où chaque ingrédient est choisi avec attention et préparé avec amour. Vous repartirez avec de nouvelles recettes, des techniques de préparation énergétiques, et surtout, une nouvelle approche de la nutrition qui nourrit autant le corps que l'esprit.",
+                image: "images/cuisine.jpg"
+            },
+            {
+                id: 6,
+                titre: "Cercle de parole mensuel",
+                date: "2023-12-15",
+                contenu: "Chaque troisième jeudi du mois, nous vous invitons à participer à notre cercle de parole, un moment privilégié d'échange et de partage dans un cadre bienveillant et confidentiel. Ces rencontres permettent à chacun de s'exprimer librement sur ses expériences, ses questionnements et ses découvertes personnelles. Animés par nos thérapeutes qualifiés, ces cercles créent un espace de soutien mutuel où naissent souvent des liens durables entre les participants. C'est un rendez-vous apprécié par notre communauté, qui trouve dans ces moments une source d'inspiration et de réconfort.",
+                image: "images/cercle.jpg"
+            }
+        ];
+        
+        const itemsPerPage = 3;
+        let currentPage = 1;
+        
+        function displayNews(page) {
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const newsToShow = allNews.slice(startIndex, endIndex);
+            
+            const container = document.getElementById('actualitesListe');
+            container.innerHTML = '';
+            
+            newsToShow.forEach(actualite => {
+                const article = createFullNewsArticle(actualite);
+                container.appendChild(article);
+            });
+        }
+        
+        function createFullNewsArticle(actualite) {
+            const article = document.createElement('article');
+            article.className = 'actualite-full';
+            
+            const date = new Date(actualite.date);
+            const formattedDate = date.toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            article.innerHTML = `
+                <img src="${actualite.image}" alt="${actualite.titre}" onerror="this.src='images/placeholder.jpg'">
+                <div class="actualite-full-content">
+                    <div class="actualite-full-date">${formattedDate}</div>
+                    <h2 class="actualite-full-titre">${actualite.titre}</h2>
+                    <div class="actualite-full-contenu">${actualite.contenu}</div>
+                </div>
+            `;
+            
+            return article;
+        }
+        
+        function createPagination() {
+            const totalPages = Math.ceil(allNews.length / itemsPerPage);
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';
+            
+            // Previous button
+            const prevButton = document.createElement('button');
+            prevButton.textContent = '← Précédent';
+            prevButton.disabled = currentPage === 1;
+            prevButton.onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayNews(currentPage);
+                    createPagination();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+            paginationContainer.appendChild(prevButton);
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.classList.toggle('active', i === currentPage);
+                pageButton.onclick = () => {
+                    currentPage = i;
+                    displayNews(currentPage);
+                    createPagination();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                paginationContainer.appendChild(pageButton);
+            }
+            
+            // Next button
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Suivant →';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayNews(currentPage);
+                    createPagination();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+            paginationContainer.appendChild(nextButton);
+        }
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            displayNews(1);
+            createPagination();
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Le Centre de Remise en Joie</title>
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <h1>Administration</h1>
+            <p>Centre de Remise en Joie</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur :</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe :</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn-login">Se connecter</button>
+            </form>
+            <div id="loginError" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div id="adminPanel" class="admin-panel" style="display: none;">
+        <header class="admin-header">
+            <h1>Panneau d'Administration</h1>
+            <div class="admin-user-info">
+                <span id="welcomeUser"></span>
+                <button onclick="logout()" class="btn-logout">Déconnexion</button>
+            </div>
+        </header>
+
+        <nav class="admin-nav">
+            <button class="nav-btn active" onclick="showSection('actualites')">Actualités</button>
+            <button class="nav-btn" onclick="showSection('reservations')">Réservations</button>
+            <button class="nav-btn" onclick="showSection('disponibilites')">Disponibilités</button>
+            <button class="nav-btn" onclick="showSection('contacts')">Messages</button>
+            <button class="nav-btn" onclick="showSection('parametres')">Paramètres</button>
+        </nav>
+
+        <main class="admin-content">
+            <!-- Section Actualités -->
+            <section id="actualites-section" class="admin-section active">
+                <div class="section-header">
+                    <h2>Gestion des Actualités</h2>
+                    <button class="btn-primary" onclick="showAddNewsForm()">Ajouter une actualité</button>
+                </div>
+
+                <div id="newsForm" class="form-container" style="display: none;">
+                    <h3 id="formTitle">Nouvelle actualité</h3>
+                    <form id="actualiteForm">
+                        <input type="hidden" id="newsId">
+                        <div class="form-group">
+                            <label for="newsTitre">Titre :</label>
+                            <input type="text" id="newsTitre" name="titre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newsDate">Date :</label>
+                            <input type="date" id="newsDate" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newsResume">Résumé (pour la page d'accueil) :</label>
+                            <textarea id="newsResume" name="resume" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="newsContenu">Contenu complet :</label>
+                            <textarea id="newsContenu" name="contenu" rows="6" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="newsImage">URL de l'image :</label>
+                            <input type="url" id="newsImage" name="image" placeholder="https://exemple.com/image.jpg">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Enregistrer</button>
+                            <button type="button" class="btn-secondary" onclick="hideNewsForm()">Annuler</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="news-list">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="newsTableBody">
+                            <!-- Les actualités seront chargées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section Réservations -->
+            <section id="reservations-section" class="admin-section">
+                <div class="section-header">
+                    <h2>Gestion des Réservations</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" onclick="filterReservations('all')">Toutes</button>
+                        <button class="filter-btn" onclick="filterReservations('pending')">En attente</button>
+                        <button class="filter-btn" onclick="filterReservations('confirmed')">Confirmées</button>
+                        <button class="filter-btn" onclick="filterReservations('cancelled')">Annulées</button>
+                    </div>
+                </div>
+
+                <div class="reservations-list">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date de demande</th>
+                                <th>Arrivée</th>
+                                <th>Départ</th>
+                                <th>Personnes</th>
+                                <th>Type</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservationsTableBody">
+                            <!-- Les réservations seront chargées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section Disponibilités -->
+            <section id="disponibilites-section" class="admin-section">
+                <div class="section-header">
+                    <h2>Gestion des Disponibilités</h2>
+                    <div class="availability-controls">
+                        <button class="btn-primary" onclick="showAvailabilityForm()">Modifier les disponibilités</button>
+                        <button class="btn-secondary" onclick="exportAvailability()">Exporter</button>
+                    </div>
+                </div>
+
+                <div class="availability-stats">
+                    <div class="stat-card">
+                        <h4>Taux d'occupation moyen</h4>
+                        <div class="stat-value">68%</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Réservations ce mois</h4>
+                        <div class="stat-value">23</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Hébergement le plus demandé</h4>
+                        <div class="stat-value">Le Tipi</div>
+                    </div>
+                </div>
+
+                <div class="availability-calendar-container">
+                    <div class="calendar-controls">
+                        <div class="calendar-nav">
+                            <button class="calendar-nav-btn" onclick="changeAdminMonth(-1)">&lt;</button>
+                            <h3 id="adminCalendarMonth"></h3>
+                            <button class="calendar-nav-btn" onclick="changeAdminMonth(1)">&gt;</button>
+                        </div>
+                        <div class="calendar-legend">
+                            <div class="legend-item">
+                                <div class="legend-color admin-available"></div>
+                                <span>Disponible</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color admin-occupied"></div>
+                                <span>Occupé</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color admin-partial"></div>
+                                <span>Partiellement occupé</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-calendar-grid" id="adminCalendarGrid"></div>
+                </div>
+
+                <div class="accommodation-status">
+                    <h3>État des hébergements</h3>
+                    <div class="accommodation-grid">
+                        <div class="accommodation-status-card">
+                            <h4>Le Tipi</h4>
+                            <div class="status-info">
+                                <span class="capacity">4 personnes max</span>
+                                <span class="availability-rate">Disponible à 70%</span>
+                            </div>
+                            <div class="status-actions">
+                                <button class="btn-small" onclick="manageAccommodationAvailability('tipi')">Gérer</button>
+                            </div>
+                        </div>
+                        <div class="accommodation-status-card">
+                            <h4>La Caravane</h4>
+                            <div class="status-info">
+                                <span class="capacity">2 personnes max</span>
+                                <span class="availability-rate">Disponible à 85%</span>
+                            </div>
+                            <div class="status-actions">
+                                <button class="btn-small" onclick="manageAccommodationAvailability('caravane')">Gérer</button>
+                            </div>
+                        </div>
+                        <div class="accommodation-status-card">
+                            <h4>Le Dortoir du Chalet</h4>
+                            <div class="status-info">
+                                <span class="capacity">8 personnes max</span>
+                                <span class="availability-rate">Disponible à 45%</span>
+                            </div>
+                            <div class="status-actions">
+                                <button class="btn-small" onclick="manageAccommodationAvailability('dortoir')">Gérer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Messages -->
+            <section id="contacts-section" class="admin-section">
+                <div class="section-header">
+                    <h2>Messages de Contact</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" onclick="filterContacts('all')">Tous</button>
+                        <button class="filter-btn" onclick="filterContacts('unread')">Non lus</button>
+                        <button class="filter-btn" onclick="filterContacts('read')">Lus</button>
+                    </div>
+                </div>
+
+                <div class="contacts-list">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Message</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contactsTableBody">
+                            <!-- Les messages seront chargés dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section Paramètres -->
+            <section id="parametres-section" class="admin-section">
+                <div class="section-header">
+                    <h2>Paramètres du Site</h2>
+                </div>
+
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label for="siteName">Nom du site :</label>
+                        <input type="text" id="siteName" value="Le Centre de Remise en Joie">
+                    </div>
+                    <div class="form-group">
+                        <label for="siteEmail">Email de contact :</label>
+                        <input type="email" id="siteEmail" value="contact@chaletananda.fr">
+                    </div>
+                    <div class="form-group">
+                        <label for="sitePhone">Téléphone :</label>
+                        <input type="tel" id="sitePhone" value="06 21 39 72 24">
+                    </div>
+                    <div class="form-group">
+                        <label for="siteAddress">Adresse :</label>
+                        <textarea id="siteAddress" rows="3">Le balcon d'Augère
+63210 Vernines France</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="facebookUrl">URL Facebook :</label>
+                        <input type="url" id="facebookUrl" value="https://facebook.com/chaletananda">
+                    </div>
+                    <div class="form-group">
+                        <label for="facebookIntegration">Intégration Facebook :</label>
+                        <select id="facebookIntegration">
+                            <option value="disabled" selected>Désactivée</option>
+                            <option value="enabled">Activée</option>
+                        </select>
+                        <small>
+                            <strong>Pas de page Facebook Business ?</strong><br>
+                            • Laissez "Désactivée" pour utiliser seulement vos actualités locales<br>
+                            • Ou <a href="https://facebook.com/pages/create" target="_blank">créez une page Facebook Business gratuitement</a>
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label for="facebookPageId">ID de votre page Facebook :</label>
+                        <input type="text" id="facebookPageId" placeholder="123456789012345">
+                        <small>L'ID numérique de votre page Facebook (visible dans l'URL ou les paramètres)</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="facebookToken">Token d'accès Facebook :</label>
+                        <input type="password" id="facebookToken" placeholder="Votre token d'accès Facebook">
+                        <small>Token d'accès à la page pour l'API Graph (généré via Facebook Developers)</small>
+                    </div>
+                    <div class="form-group facebook-test">
+                        <button type="button" class="btn-secondary" onclick="testFacebookConnection()">
+                            🔍 Tester la connexion Facebook
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="refreshFacebookPosts()">
+                            🔄 Actualiser les posts Facebook
+                        </button>
+                        <div class="facebook-status" id="facebookPageName"></div>
+                    </div>
+                    <button class="btn-primary" onclick="saveSettings()">Enregistrer les paramètres</button>
+                </div>
+
+                <div class="backup-section">
+                    <h3>Sauvegarde des données</h3>
+                    <div class="backup-actions">
+                        <button class="btn-secondary" onclick="exportData()">Exporter les données</button>
+                        <button class="btn-secondary" onclick="importData()">Importer des données</button>
+                        <input type="file" id="importFile" accept=".json" style="display: none;">
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>

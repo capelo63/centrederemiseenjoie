@@ -1,0 +1,21 @@
+Je voudrais faire un site Internet pour mettre en avant un lieu consacré au mieux-être en plein cœur du Parc naturel régional des volcans d’Auvergne, qu'on appelle "Le centre de remise en joie" (actuellement présenté sur le site : https://chaletananda.fr/). 
+Je voudrais que le texte suivant s'affiche sous le titre :
+"Le centre de remise en joie vous accueille pour une ou plusieurs journées, en solo ou en groupe, selon vos envies et vos besoins, afin de vous proposer une retraite, un retour à soi, un temps de pause avec le quotidien
+Venez vivre une expérience unique de ressourcement au cœur de la nature. Notre site d’exception vous offre un environnement paisible et inspirant pour vous reconnecter à vous-même et à votre bien-être."
+Sous ce texte, je voudrais intégrer un slideshow qui montre des photos du centre et du paysage, avec dans un premier temps des photos génériques. Que peux-tu me proposer ?
+Le site doit dès la page d'accueil permettre aux internautes de réserver des périodes d'hébergement et de voir les dernières actualités sans cliquer sur une autre page. Je souhaite une solution en HTML/CSS/JavaScript pur (vanilla) ou en Rust si tu penses que c'est plus pertinent.
+Le site va être utilisé par des gens qui ne connaissent rien à Internet. Est-il possible de leur proposer une interface d'administration simple pour gérer les actualités et les réservations ? Avec bien sûr un système de sécurité complet avec authentification et protection des données. La page d'administration devra être une page indépendante.
+Je voudrais également que le site affiche en page d'accueil les 4 dernières actualités et permette d'accéder à une autre page avec les actualités plus anciennes, avec la reprise pour certaines actualités de posts issu d'un compte Facebook.
+Je voudrais également une section "Nous contacter" avec le texte suivant :
+Nos coordonnées
+EMAIL
+contact@chaletananda.fr
+TÉLÉPHONE
+06 21 39 72 24
+ADRESSE
+Le balcon d’Augère 
+63210 Vernines France
+et des champs pour permettre à l'internaute de nous envoyer un mail :
+* "Votre prénom et votre nom"
+* "Votre adresse électronique"
+* "Votre message"

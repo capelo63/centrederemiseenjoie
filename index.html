@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Centre de Remise en Joie</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Video Background -->
+    <div class="video-background">
+        <video autoplay muted loop playsinline>
+            <source src="videos/background.mp4" type="video/mp4">
+            <source src="videos/background.webm" type="video/webm">
+            <!-- Fallback pour navigateurs sans support vidéo -->
+        </video>
+    </div>
+
+    <!-- Video Control Button -->
+    <button class="video-control" id="videoToggle" title="Mettre en pause/reprendre la vidéo">⏸️</button>
+
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="images/logo.png" alt="Logo Centre de Remise en Joie" class="logo-image">
+                <h1>Le Centre de Remise en Joie</h1>
+            </div>
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#reservation">Réservation</a></li>
+                <li><a href="#actualites">Actualités</a></li>
+                <li><a href="#hotes">Vos hôtes</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="accueil" class="hero">
+            <div class="hero-content">
+                <h2>Le Centre de Remise en Joie</h2>
+                <p class="hero-text">
+                    Le centre de remise en joie vous accueille pour une ou plusieurs journées, en solo ou en groupe, selon vos envies et vos besoins, afin de vous proposer une retraite, un retour à soi, un temps de pause avec le quotidien.
+                </p>
+                <p class="hero-text">
+                    Venez vivre une expérience unique de ressourcement au cœur de la nature. Notre site d'exception vous offre un environnement paisible et inspirant pour vous reconnecter à vous-même et à votre bien-être.
+                </p>
+            </div>
+        </section>
+
+        <section class="three-columns">
+            <div class="column">
+                <div class="column-icon-image">
+                    <img src="images/ou.jpg" alt="Où" loading="lazy">
+                </div>
+                <h3>Où</h3>
+                <p>Le centre de remise en joie est un lieu dédié au mieux-être. A seulement 28 km de Clermont-Ferrand, dans le Parc naturel régional des volcans d'Auvergne, sur une zone protégée, il offre un panorama exceptionnel sur la chaîne des Puys</p>
+            </div>
+            <div class="column">
+                <div class="column-icon-image">
+                    <img src="images/quoi.jpg" alt="Quoi" loading="lazy">
+                </div>
+                <h3>Quoi</h3>
+                <p>Le centre est conçu pour retrouver sa JOIE. La joie, cet état naturel de l'homme, malheureusement oubliée par un quotidien stressant. Retrouver sa JOIE, c'est se débarrasser de la charge mentale accumulée par notre mode de vie, nos contrariétés personnelles comme professionnelles...</p>
+            </div>
+            <div class="column">
+                <div class="column-icon-image">
+                    <img src="images/comment.jpg" alt="Comment" loading="lazy">
+                </div>
+                <h3>Comment</h3>
+                <p>D'abord une phase de déconnexion par des pratiques centrées sur soi (yoga, méditation...). Puis une phase de redécouverte de la nature et de ses bienfaits dans un lieu unique où le temps est suspendu. Arrêter l'agitation du mental permet de retrouver sa joie, sa légèreté et son mieux-être.</p>
+            </div>
+        </section>
+
+        <section class="slideshow-container">
+            <div class="slideshow">
+                <div class="slide active">
+                    <img src="images/bassinboudha.jpg" alt="Espace de méditation avec le bassin Boudha" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/boudha.jpg" alt="Statue de Boudha dans l'espace méditation" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/caravane.jpg" alt="La caravane, hébergement cosy et confortable" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/chalet01.jpg" alt="Le chalet principal du centre" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/fleurs01.jpg" alt="Jardin fleuri du centre au printemps" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/fleurs02.jpg" alt="Magnifiques fleurs sauvages du jardin" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/fleurs03.jpg" alt="Explosion de couleurs florales" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/fleurs04.jpg" alt="Délicates fleurs du parc naturel" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/fleurs05.jpg" alt="Nature florissante autour du centre" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/hetraie02.jpg" alt="Magnifique hêtraie environnante" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/labyrinthe.jpg" alt="Le labyrinthe de méditation" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/neige.jpg" alt="Le centre sous son manteau hivernal" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/puys01.jpg" alt="Vue panoramique sur la chaîne des Puys" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/puys02.jpg" alt="Magnifique paysage des volcans d'Auvergne" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/soleilcouchant.jpg" alt="Coucher de soleil depuis le centre" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/terraseboudha.jpg" alt="Terrasse de méditation avec vue" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/tipi01.jpg" alt="Le tipi, hébergement unique en pleine nature" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/vuelac.jpg" alt="Vue magnifique sur le lac depuis le centre" loading="lazy">
+                </div>
+                <div class="slide">
+                    <img src="images/yourte02.jpg" alt="La yourte, espace de retraite traditionnel" loading="lazy">
+                </div>
+            </div>
+            <button class="prev" onclick="changeSlide(-1)">❮</button>
+            <button class="next" onclick="changeSlide(1)">❯</button>
+            <div class="dots">
+                <span class="dot active" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+                <span class="dot" onclick="currentSlide(4)"></span>
+                <span class="dot" onclick="currentSlide(5)"></span>
+                <span class="dot" onclick="currentSlide(6)"></span>
+                <span class="dot" onclick="currentSlide(7)"></span>
+                <span class="dot" onclick="currentSlide(8)"></span>
+                <span class="dot" onclick="currentSlide(9)"></span>
+                <span class="dot" onclick="currentSlide(10)"></span>
+                <span class="dot" onclick="currentSlide(11)"></span>
+                <span class="dot" onclick="currentSlide(12)"></span>
+                <span class="dot" onclick="currentSlide(13)"></span>
+                <span class="dot" onclick="currentSlide(14)"></span>
+                <span class="dot" onclick="currentSlide(15)"></span>
+                <span class="dot" onclick="currentSlide(16)"></span>
+                <span class="dot" onclick="currentSlide(17)"></span>
+                <span class="dot" onclick="currentSlide(18)"></span>
+                <span class="dot" onclick="currentSlide(19)"></span>
+            </div>
+        </section>
+
+        <section id="reservation" class="reservation">
+            <h3>Réservation</h3>
+            <div class="reservation-intro">
+                <p>Le centre de remise en joie est un lieu dédié au mieux-être, à la reconnexion à soi et à la nature où on vient s'apaiser :</p>
+            </div>
+            
+            <div class="reservation-form">
+                <form id="reservationForm">
+                    <!-- Type de réservation -->
+                    <div class="form-section">
+                        <h4>Type de séjour</h4>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="activites" name="typeReservation" value="activites" required>
+                                <label for="activites">
+                                    <strong>Activités uniquement</strong>
+                                    <span>Participer à des activités organisées sur place</span>
+                                </label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="hebergement" name="typeReservation" value="hebergement" required>
+                                <label for="hebergement">
+                                    <strong>Hébergement</strong>
+                                    <span>Nuitée avec petit-déjeuner inclus</span>
+                                </label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="hebergement_activites" name="typeReservation" value="hebergement_activites" required>
+                                <label for="hebergement_activites">
+                                    <strong>Hébergement + Activités</strong>
+                                    <span>Hébergement avec activités au choix</span>
+                                </label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="entreprise" name="typeReservation" value="entreprise" required>
+                                <label for="entreprise">
+                                    <strong>Animation entreprise</strong>
+                                    <span>Organisation d'animations pour entreprises</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dates et personnes -->
+                    <div class="form-section">
+                        <h4>Informations générales</h4>
+                        
+                        <!-- Sélection simple des dates -->
+                        <div class="simple-date-selection">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="dateArriveeSimple">Date d'arrivée :</label>
+                                    <input type="date" id="dateArriveeSimple" name="dateArriveeSimple" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dateDepartSimple">Date de départ :</label>
+                                    <input type="date" id="dateDepartSimple" name="dateDepartSimple" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="nombrePersonnes">Nombre de personnes :</label>
+                                <select id="nombrePersonnes" name="nombrePersonnes" required>
+                                    <option value="">Choisissez...</option>
+                                    <option value="1">1 personne</option>
+                                    <option value="2">2 personnes</option>
+                                    <option value="3">3 personnes</option>
+                                    <option value="4">4 personnes</option>
+                                    <option value="5">5 personnes</option>
+                                    <option value="6+">6 personnes ou plus</option>
+                                </select>
+                            </div>
+                            <div class="calendar-toggle-container">
+                                <button type="button" class="btn-calendar-toggle" id="showCalendarBtn">
+                                    📅 Voir les disponibilités sur le calendrier
+                                </button>
+                                <p class="calendar-toggle-info">Pour vérifier les disponibilités détaillées et choisir vos hébergements</p>
+                            </div>
+                        </div>
+
+                        <!-- Calendrier détaillé (masqué par défaut) -->
+                        <div class="calendar-container" id="detailedCalendar" style="display: none;">
+                            <div class="calendar-header">
+                                <h5>Sélectionnez vos dates</h5>
+                                <p class="calendar-info">Cliquez sur une date d'arrivée, puis sur une date de départ</p>
+                            </div>
+                            <div class="calendar-navigation">
+                                <button type="button" class="calendar-nav-btn" id="prevMonth">&lt;</button>
+                                <span class="calendar-month-year" id="currentMonthYear"></span>
+                                <button type="button" class="calendar-nav-btn" id="nextMonth">&gt;</button>
+                            </div>
+                            <div class="calendar-grid" id="calendarGrid"></div>
+                            <div class="calendar-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color available"></div>
+                                    <span>Disponible</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color occupied"></div>
+                                    <span>Occupé</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color selected"></div>
+                                    <span>Sélectionné</span>
+                                </div>
+                            </div>
+                            <div class="selected-dates">
+                                <div class="selected-date-group">
+                                    <label>Date d'arrivée :</label>
+                                    <span id="selectedArrival">Non sélectionnée</span>
+                                </div>
+                                <div class="selected-date-group">
+                                    <label>Date de départ :</label>
+                                    <span id="selectedDeparture">Non sélectionnée</span>
+                                </div>
+                            </div>
+                            <div class="calendar-actions">
+                                <button type="button" class="btn-secondary" id="hideCalendarBtn">
+                                    ← Revenir à la sélection simple
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Hidden inputs pour le formulaire -->
+                        <input type="hidden" id="dateArrivee" name="dateArrivee" required>
+                        <input type="hidden" id="dateDepart" name="dateDepart" required>
+                    </div>
+
+                    <!-- Type d'hébergement -->
+                    <div class="form-section" id="hebergementSection" style="display: none;">
+                        <h4>Type d'hébergement</h4>
+                        <p class="hebergement-info">Les hébergements disponibles s'affichent selon vos dates et le nombre de personnes</p>
+                        <div class="hebergement-grid" id="hebergementGrid">
+                            <!-- Les hébergements disponibles seront affichés dynamiquement -->
+                        </div>
+                    </div>
+
+                    <!-- Activités -->
+                    <div class="form-section" id="activitesSection" style="display: none;">
+                        <h4>Activités souhaitées</h4>
+                        <div class="checkbox-group">
+                            <div class="checkbox-option">
+                                <input type="checkbox" id="yoga" name="activites" value="yoga">
+                                <label for="yoga">Yoga <small>(disponible tous les jours)</small></label>
+                            </div>
+                            <div class="checkbox-option">
+                                <input type="checkbox" id="meditation" name="activites" value="meditation">
+                                <label for="meditation">Méditation <small>(disponible tous les jours)</small></label>
+                            </div>
+                            <div class="checkbox-option">
+                                <input type="checkbox" id="reflexologie" name="activites" value="reflexologie">
+                                <label for="reflexologie">Réflexologie <small>(disponible tous les jours)</small></label>
+                            </div>
+                            <div class="checkbox-option">
+                                <input type="checkbox" id="reiki" name="activites" value="reiki">
+                                <label for="reiki">Reiki <small>(disponible tous les jours)</small></label>
+                            </div>
+                            <div class="checkbox-option">
+                                <input type="checkbox" id="autres_activites" name="activites" value="autres">
+                                <label for="autres_activites">Autres activités <small>(à préciser dans le message)</small></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Options repas -->
+                    <div class="form-section" id="repasSection" style="display: none;">
+                        <h4>Options repas (végétarien)</h4>
+                        <div class="checkbox-group">
+                            <div class="checkbox-option">
+                                <input type="checkbox" id="dejeuner" name="repas" value="dejeuner">
+                                <label for="dejeuner">Déjeuner</label>
+                            </div>
+                            <div class="checkbox-option">
+                                <input type="checkbox" id="diner" name="repas" value="diner">
+                                <label for="diner">Dîner</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Message -->
+                    <div class="form-section">
+                        <div class="form-group">
+                            <label for="messageReservation">Message :</label>
+                            <textarea id="messageReservation" name="messageReservation" rows="4" placeholder="Précisez vos besoins, demandes particulières, ou détaillez vos besoins pour les animations d'entreprise..."></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Envoyer la demande de réservation</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="actualites" class="actualites">
+            <h3>Actualités</h3>
+            <div class="actualites-grid" id="actualitesContainer">
+                <!-- Les actualités seront chargées dynamiquement -->
+            </div>
+            <a href="actualites.html" class="voir-plus">Voir toutes les actualités</a>
+        </section>
+
+        <section id="hotes" class="hosts-section">
+            <div class="section-title-container">
+                <h3 class="section-title">Vos hôtes</h3>
+                <div class="section-decoration"></div>
+            </div>
+            
+            <div class="hosts-container">
+                <div class="host-card">
+                    <div class="host-image">
+                        <img src="images/deva.jpg" alt="Deva Karuna" loading="lazy">
+                    </div>
+                    <div class="host-content">
+                        <h4>Deva Karuna</h4>
+                        <div class="host-description">
+                            <p>Depuis près de 20 ans, je me passionne pour les médecines douces, les thérapies alternatives, les soins holistiques.</p>
+                            <p>Sur mon parcours, j'ai donc rencontré différents thérapeutes qui m'ont bien sûr aidé à mon éveil, à mon développement personnel.</p>
+                            <p>C'est à l'occasion d'un stage que <strong>OSHO</strong> est rentré dans ma vie, il y a 4 ans. Comme un grand coup de tonnerre, son enseignement et ses méditations ont étés la révélation.</p>
+                            <p>J'ai suivi plusieurs stages de transmission des méditations actives OSHO avec YOKO, une disciple de OSHO.</p>
+                            <p>Être facilitatrice des méditations actives OSHO, c'est <em>Accompagner, Guider, Soutenir</em> mais aussi garder vivant l'enseignement de OSHO.</p>
+                            <p>Le 10 septembre 2022, j'ai pris sannyasa auprès de YOKO, mon nom depuis est : <strong>DEVA KARUNA</strong>.</p>
+                            <p>Être sannyasin, c'est être un chercheur de vérité ; sa propre vérité ! Et c'est grâce à la méditation que l'on peut trouver la réponse !</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="host-card">
+                    <div class="host-image">
+                        <img src="images/atma.jpg" alt="Atma Prakash" loading="lazy">
+                    </div>
+                    <div class="host-content">
+                        <h4>Atma Prakash</h4>
+                        <div class="host-description">
+                            <p>L'aventure débute par un voyage itinérant dans l'inde du sud, et plus précisément dans le <strong>Kerala</strong>, berceau de la médecine ayurvédique.</p>
+                            <p>Accompagnée de ma chère et tendre, Deva Karuna, ce voyage touristique se transforme rapidement en voyage initiatique.</p>
+                            <p>Dès les premiers jours, l'immersion est totale. Le début du cheminement. Et celui-ci commence précisément à Nédungolam, à une quinzaine de kilomètres de Verkala.</p>
+                            <p>En quelques jours d'un court séjour à Maithrimandir, je découvre les vertus de la médecine traditionnelle ayurvédique (<em>massage, cuisine végétarienne et yoga</em>).</p>
+                            <p>Les échanges effectués avec le maître des lieux, Ekarshi Sarva Atma, résonnent en moi comme une évidence.</p>
+                            <p>Je découvre avec étonnement et concentration l'immensité de mon être, par des pratiques simples de respiration, de postures et de méditation.</p>
+                            <p>Depuis <strong>2017</strong>, le yoga fait partie de mon quotidien.</p>
+                            <p>Fermement décidé (j'appliquais déjà les préceptes de Patanjali sans même le savoir – Yoga Sutras Chap1 – sutra 21 tivra-samveganam-asannah) je m'engage sur le chemin de la connaissance de Soi.</p>
+                            <p>J'entame en 2020, un programme sur plusieurs années, dans le Kerala et en France, nommé <strong>Gaia Healer, Ananya Sarva Yoga</strong>. Le programme se fonde sur le référentiel de formation indien Ayushyoga.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials">
+            <h3>Témoignages</h3>
+            <div class="testimonials-container">
+                <div class="testimonials-slideshow">
+                    <div class="testimonial active">
+                        <div class="testimonial-content">
+                            <div class="quote-icon">❝</div>
+                            <p class="testimonial-text">La méditation active proposée et enseignée par Nelly est pour moi un vrai voyage intérieur. Nelly est un bon guide, douce, très à l'écoute, elle sait poser les bonnes questions pour nous aider à débloquer certains de nos fonctionnements qui nous créent des tensions. Elle sait nous mettre à l'aise. Le fait d'être en groupe et de pouvoir parler de nos difficultés sans gêne et sans jugement est déculpabilisant. On se sent moins seule. Au fil du temps, on devient observateur de nos pensées, on se sent plus légère, libérée et avec un regain d'énergie. Merci !</p>
+                            <div class="testimonial-author">
+                                <div class="author-name">Anne-Marie</div>
+                                <div class="author-role">Participante aux ateliers de méditation</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonials-nav">
+                    <button class="testimonial-prev" onclick="changeTestimonial(-1)">❮</button>
+                    <div class="testimonials-dots">
+                        <span class="testimonial-dot active" onclick="currentTestimonial(1)"></span>
+                        <!-- Plus de dots seront ajoutés dynamiquement quand vous aurez plus de témoignages -->
+                    </div>
+                    <button class="testimonial-next" onclick="changeTestimonial(1)">❯</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact">
+            <h3>Nous contacter</h3>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h4>Nos coordonnées</h4>
+                    <div class="contact-item">
+                        <strong>EMAIL</strong>
+                        <p>contact@chaletananda.fr</p>
+                    </div>
+                    <div class="contact-item">
+                        <strong>TÉLÉPHONE</strong>
+                        <p>06 21 39 72 24</p>
+                    </div>
+                    <div class="contact-item">
+                        <strong>ADRESSE</strong>
+                        <p>Le balcon d'Augère<br>63210 Vernines France</p>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="nomPrenom">Votre prénom et votre nom :</label>
+                            <input type="text" id="nomPrenom" name="nomPrenom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Votre adresse électronique :</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Votre message :</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">Envoyer le message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Le Centre de Remise en Joie. Tous droits réservés.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

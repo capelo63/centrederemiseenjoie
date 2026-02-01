@@ -161,12 +161,21 @@
     <header>
         <nav>
             <div class="logo">
+                <img src="images/logo.png" alt="Logo Centre de Remise en Joie" class="logo-image">
                 <h1>Le Centre de Remise en Joie</h1>
             </div>
-            <ul class="nav-links">
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">Accueil</a></li>
+                <li><a href="index.html#programme">Programme</a></li>
+                <li><a href="index.html#hotes">Hôtes</a></li>
+                <li><a href="index.html#hebergement">Hébergement</a></li>
+                <li><a href="actualites.html" class="active">Actualités</a></li>
                 <li><a href="index.html#reservation">Réservation</a></li>
-                <li><a href="actualites.html">Actualités</a></li>
                 <li><a href="index.html#contact">Contact</a></li>
             </ul>
         </nav>
@@ -322,7 +331,37 @@
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             loadAllNews();
+            setupMobileMenu();
         });
+
+        // Mobile menu
+        function setupMobileMenu() {
+            const menuToggle = document.getElementById('menuToggle');
+            const navLinks = document.getElementById('navLinks');
+            if (!menuToggle || !navLinks) return;
+
+            menuToggle.addEventListener('click', function() {
+                menuToggle.classList.toggle('active');
+                navLinks.classList.toggle('active');
+                document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+            });
+
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function() {
+                    menuToggle.classList.remove('active');
+                    navLinks.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
+                    menuToggle.classList.remove('active');
+                    navLinks.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
     </script>
 </body>
 </html>

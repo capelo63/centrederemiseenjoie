@@ -2345,42 +2345,6 @@ footer {
     }
 }
 
-/* ===== Section Actualités - Facebook ===== */
-.social-section {
-    margin-top: 3rem;
-    text-align: center;
-}
-
-.social-section h4 {
-    color: #1F5733;
-    font-size: 1.4rem;
-    font-weight: 400;
-    margin-bottom: 1.5rem;
-}
-
-.facebook-widget-large {
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-    max-width: 500px;
-}
-
-.social-link {
-    display: inline-block;
-    margin-top: 1.5rem;
-    padding: 0.8rem 2rem;
-    background: #1877f2;
-    color: white;
-    text-decoration: none;
-    border-radius: 25px;
-    font-size: 0.95rem;
-    transition: background 0.3s ease;
-}
-
-.social-link:hover {
-    background: #1565c0;
-}
-
 /* ===== Navigation responsive pour 7 items ===== */
 .nav-links a {
     padding: 0.7rem 1rem;

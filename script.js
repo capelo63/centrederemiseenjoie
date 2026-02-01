@@ -114,18 +114,15 @@ async function loadNews() {
     try {
         let newsToDisplay = sampleNews;
 
-        // Charger les actualités depuis Supabase
-        if (typeof supabase !== 'undefined') {
-            const { data, error } = await supabase
-                .from('news')
-                .select('*')
-                .eq('status', 'published')
-                .order('date', { ascending: false });
-
-            if (!error && data && data.length > 0) {
-                newsToDisplay = data;
-            } else if (error) {
-                console.error('Erreur Supabase:', error.message);
+        // Charger les actualités depuis Supabase via REST
+        if (typeof supabaseRest !== 'undefined') {
+            try {
+                const data = await supabaseRest.select('news', 'select=*&status=eq.published&order=date.desc');
+                if (data && data.length > 0) {
+                    newsToDisplay = data;
+                }
+            } catch (e) {
+                console.error('Erreur Supabase:', e.message);
             }
         }
 

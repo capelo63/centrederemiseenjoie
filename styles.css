@@ -2345,54 +2345,40 @@ footer {
     }
 }
 
-/* ===== Section Actualités layout ===== */
-.actualites-layout {
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 2rem;
-    align-items: start;
-}
-
-.actualites-social {
-    position: sticky;
-    top: 100px;
-}
-
-.social-feed h4 {
-    color: #1F5733;
-    font-size: 1.2rem;
-    font-weight: 400;
+/* ===== Section Actualités - Facebook ===== */
+.social-section {
+    margin-top: 3rem;
     text-align: center;
-    margin-bottom: 1rem;
 }
 
-.facebook-widget {
+.social-section h4 {
+    color: #1F5733;
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+}
+
+.facebook-widget-large {
     display: flex;
     justify-content: center;
-    background: white;
-    border-radius: 12px;
-    padding: 1rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    margin: 0 auto;
+    max-width: 500px;
 }
 
-.facebook-widget iframe {
-    border-radius: 8px;
+.social-link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.8rem 2rem;
+    background: #1877f2;
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    transition: background 0.3s ease;
 }
 
-@media (max-width: 900px) {
-    .actualites-layout {
-        grid-template-columns: 1fr;
-    }
-
-    .actualites-social {
-        position: static;
-    }
-
-    .facebook-widget iframe {
-        width: 100%;
-        max-width: 340px;
-        margin: 0 auto;
-    }
+.social-link:hover {
+    background: #1565c0;
 }
 
 /* ===== Navigation responsive pour 7 items ===== */

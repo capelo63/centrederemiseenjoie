@@ -112,15 +112,11 @@ async function loadNews() {
     container.innerHTML = '<div class="loading-message">Chargement des actualités...</div>';
 
     try {
-        // Combiner actualités locales et posts Facebook
-        const combinedContent = await getCombinedContent();
-
-        // Vider le conteneur
+        // Charger uniquement les actualités locales (Facebook est affiché via le widget)
         container.innerHTML = '';
 
-        // Ajouter chaque élément
-        combinedContent.forEach(item => {
-            const card = item.type === 'facebook' ? createFacebookCard(item) : createNewsCard(item);
+        sampleNews.forEach(item => {
+            const card = createNewsCard(item);
             container.appendChild(card);
         });
     } catch (error) {

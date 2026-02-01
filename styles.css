@@ -2345,6 +2345,58 @@ footer {
     }
 }
 
+/* ===== Section Actualités layout ===== */
+.actualites-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 2rem;
+    align-items: start;
+}
+
+.actualites-social {
+    position: sticky;
+    top: 100px;
+}
+
+.social-feed h4 {
+    color: #1F5733;
+    font-size: 1.2rem;
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.facebook-widget {
+    display: flex;
+    justify-content: center;
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.facebook-widget iframe {
+    border-radius: 8px;
+}
+
+@media (max-width: 900px) {
+    .actualites-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .actualites-social {
+        position: static;
+    }
+
+    .facebook-widget {
+        justify-content: center;
+    }
+
+    .facebook-widget iframe {
+        max-width: 100%;
+    }
+}
+
 /* ===== Navigation responsive pour 7 items ===== */
 .nav-links a {
     padding: 0.7rem 1rem;

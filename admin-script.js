@@ -1,5 +1,6 @@
 // Admin panel functionality
 let currentUser = null;
+let accessToken = null;
 let newsData = [];
 let reservationsData = [];
 let contactsData = [];
@@ -28,16 +29,26 @@ function setupEventListeners() {
     document.getElementById('newsDate').value = today;
 }
 
-// === AUTHENTICATION via Supabase ===
+// === AUTHENTICATION via Supabase REST ===
 
-async function checkAuthStatus() {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-        currentUser = session.user;
-        showAdminPanel();
-    } else {
-        showLoginScreen();
+function checkAuthStatus() {
+    const stored = localStorage.getItem('supabaseAuth');
+    if (stored) {
+        try {
+            const authData = JSON.parse(stored);
+            if (authData.expires_at && authData.expires_at > Math.floor(Date.now() / 1000)) {
+                currentUser = authData.user;
+                accessToken = authData.access_token;
+                showAdminPanel();
+                return;
+            } else {
+                localStorage.removeItem('supabaseAuth');
+            }
+        } catch (e) {
+            localStorage.removeItem('supabaseAuth');
+        }
     }
+    showLoginScreen();
 }
 
 async function handleLogin() {
@@ -45,24 +56,30 @@ async function handleLogin() {
     const password = document.getElementById('password').value;
     const errorDiv = document.getElementById('loginError');
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password
-    });
-
-    if (error) {
-        errorDiv.textContent = 'Email ou mot de passe incorrect.';
-        errorDiv.style.display = 'block';
-    } else {
+    try {
+        const data = await supabaseRest.signIn(email, password);
         currentUser = data.user;
+        accessToken = data.access_token;
+
+        // Sauvegarder la session
+        localStorage.setItem('supabaseAuth', JSON.stringify({
+            user: data.user,
+            access_token: data.access_token,
+            expires_at: data.expires_at
+        }));
+
         showAdminPanel();
         errorDiv.style.display = 'none';
+    } catch (error) {
+        errorDiv.textContent = 'Email ou mot de passe incorrect.';
+        errorDiv.style.display = 'block';
     }
 }
 
-async function logout() {
-    await supabase.auth.signOut();
+function logout() {
+    localStorage.removeItem('supabaseAuth');
     currentUser = null;
+    accessToken = null;
     showLoginScreen();
 }
 
@@ -93,24 +110,21 @@ function showSection(sectionName) {
     document.getElementById(sectionName + '-section').classList.add('active');
 }
 
-// === NEWS MANAGEMENT via Supabase ===
+// === NEWS MANAGEMENT via Supabase REST ===
 
 async function loadNewsData() {
     const tbody = document.getElementById('newsTableBody');
     tbody.innerHTML = '<tr><td colspan="4">Chargement...</td></tr>';
 
-    const { data, error } = await supabase
-        .from('news')
-        .select('*')
-        .order('date', { ascending: false });
-
-    if (error) {
+    try {
+        const data = await supabaseRest.select('news', 'select=*&order=date.desc', accessToken);
+        newsData = data || [];
+    } catch (error) {
         console.error('Erreur chargement actualités:', error.message);
         tbody.innerHTML = '<tr><td colspan="4">Erreur de chargement</td></tr>';
         return;
     }
 
-    newsData = data || [];
     tbody.innerHTML = '';
 
     newsData.forEach(news => {
@@ -165,45 +179,30 @@ async function handleNewsSave() {
         status: 'published'
     };
 
-    let error;
+    try {
+        if (newsId) {
+            await supabaseRest.update('news', newsItem, `id=eq.${newsId}`, accessToken);
+        } else {
+            await supabaseRest.insert('news', newsItem, accessToken);
+        }
 
-    if (newsId) {
-        // Update existing
-        ({ error } = await supabase
-            .from('news')
-            .update(newsItem)
-            .eq('id', newsId));
-    } else {
-        // Insert new
-        ({ error } = await supabase
-            .from('news')
-            .insert(newsItem));
-    }
-
-    if (error) {
+        hideNewsForm();
+        await loadNewsData();
+        showSuccessMessage('Actualité enregistrée avec succès !');
+    } catch (error) {
         alert('Erreur lors de l\'enregistrement : ' + error.message);
-        return;
     }
-
-    hideNewsForm();
-    await loadNewsData();
-    showSuccessMessage('Actualité enregistrée avec succès !');
 }
 
 async function deleteNews(id) {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette actualité ?')) {
-        const { error } = await supabase
-            .from('news')
-            .delete()
-            .eq('id', id);
-
-        if (error) {
+        try {
+            await supabaseRest.remove('news', `id=eq.${id}`, accessToken);
+            await loadNewsData();
+            showSuccessMessage('Actualité supprimée avec succès !');
+        } catch (error) {
             alert('Erreur lors de la suppression : ' + error.message);
-            return;
         }
-
-        await loadNewsData();
-        showSuccessMessage('Actualité supprimée avec succès !');
     }
 }
 
@@ -211,7 +210,7 @@ function hideNewsForm() {
     document.getElementById('newsForm').style.display = 'none';
 }
 
-// === SAMPLE DATA for reservations/contacts (localStorage, inchangé) ===
+// === SAMPLE DATA for reservations/contacts (inchangé) ===
 
 function loadSampleData() {
     // Sample reservations data
@@ -288,7 +287,6 @@ function loadReservationsData() {
 }
 
 function filterReservations(status) {
-    // Update filter buttons
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
 
@@ -343,7 +341,6 @@ function loadContactsData() {
 }
 
 function filterContacts(status) {
-    // Update filter buttons
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
 
@@ -381,14 +378,15 @@ function markAsRead(id) {
 // === EXPORT / IMPORT ===
 
 async function exportData() {
-    // Récupérer les news depuis Supabase pour l'export
-    const { data: newsFromDb } = await supabase
-        .from('news')
-        .select('*')
-        .order('date', { ascending: false });
+    let newsFromDb = newsData;
+    try {
+        newsFromDb = await supabaseRest.select('news', 'select=*&order=date.desc', accessToken);
+    } catch (e) {
+        console.error('Export: utilisation des données en cache', e);
+    }
 
     const data = {
-        news: newsFromDb || newsData,
+        news: newsFromDb,
         reservations: reservationsData,
         contacts: contactsData,
         exportDate: new Date().toISOString()
@@ -413,9 +411,7 @@ async function importData() {
                 try {
                     const data = JSON.parse(e.target.result);
 
-                    // Importer les news dans Supabase
                     if (data.news && data.news.length > 0) {
-                        // Nettoyer les IDs pour laisser Supabase les générer
                         const newsToImport = data.news.map(n => ({
                             titre: n.titre,
                             date: n.date,
@@ -425,14 +421,7 @@ async function importData() {
                             status: n.status || 'published'
                         }));
 
-                        const { error } = await supabase
-                            .from('news')
-                            .insert(newsToImport);
-
-                        if (error) {
-                            alert('Erreur lors de l\'importation des actualités : ' + error.message);
-                            return;
-                        }
+                        await supabaseRest.insert('news', newsToImport, accessToken);
                     }
 
                     if (data.reservations) reservationsData = data.reservations;
@@ -443,7 +432,7 @@ async function importData() {
                     loadContactsData();
                     showSuccessMessage('Données importées avec succès !');
                 } catch (error) {
-                    alert('Erreur lors de l\'importation des données.');
+                    alert('Erreur lors de l\'importation : ' + error.message);
                 }
             };
             reader.readAsText(file);
@@ -538,14 +527,14 @@ function saveSettings() {
 
 function testFacebookConnection() {
     const pageId = document.getElementById('facebookPageId').value.trim();
-    const accessToken = document.getElementById('facebookToken').value.trim();
+    const fbAccessToken = document.getElementById('facebookToken').value.trim();
 
-    if (!pageId || !accessToken) {
+    if (!pageId || !fbAccessToken) {
         showSuccessMessage('Veuillez renseigner l\'ID de la page et le token d\'accès.');
         return;
     }
 
-    const testUrl = `https://graph.facebook.com/v18.0/${pageId}?access_token=${accessToken}&fields=name,id`;
+    const testUrl = `https://graph.facebook.com/v18.0/${pageId}?access_token=${fbAccessToken}&fields=name,id`;
 
     fetch(testUrl)
         .then(response => {

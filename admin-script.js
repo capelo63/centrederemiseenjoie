@@ -109,28 +109,45 @@ function showSection(sectionName) {
 }
 
 // News management
+function saveNewsToLocalStorage() {
+    localStorage.setItem('adminNewsData', JSON.stringify(newsData));
+}
+
 function loadSampleData() {
-    // Sample news data (in production, this would come from a database)
-    newsData = [
-        {
-            id: 1,
-            titre: "Nouveau programme de méditation",
-            date: "2024-01-15",
-            resume: "Découvrez notre nouveau programme de méditation en pleine conscience, adapté à tous les niveaux.",
-            contenu: "Nous sommes ravis de vous présenter notre nouveau programme de méditation...",
-            image: "images/meditation.jpg",
-            status: "published"
-        },
-        {
-            id: 2,
-            titre: "Ateliers yoga printaniers",
-            date: "2024-01-10",
-            resume: "Rejoignez-nous pour nos ateliers de yoga spécialement conçus pour accueillir le printemps.",
-            contenu: "Le printemps approche et avec lui, l'éveil de la nature qui nous entoure...",
-            image: "images/yoga.jpg",
-            status: "published"
+    // Charger les actualités depuis le localStorage si disponibles
+    const savedNews = localStorage.getItem('adminNewsData');
+    if (savedNews) {
+        try {
+            newsData = JSON.parse(savedNews);
+        } catch (e) {
+            console.error('Erreur lors du chargement des actualités sauvegardées:', e);
+            newsData = [];
         }
-    ];
+    } else {
+        // Données d'exemple par défaut (première utilisation uniquement)
+        newsData = [
+            {
+                id: 1,
+                titre: "Nouveau programme de méditation",
+                date: "2024-01-15",
+                resume: "Découvrez notre nouveau programme de méditation en pleine conscience, adapté à tous les niveaux.",
+                contenu: "Nous sommes ravis de vous présenter notre nouveau programme de méditation...",
+                image: "images/meditation.jpg",
+                status: "published"
+            },
+            {
+                id: 2,
+                titre: "Ateliers yoga printaniers",
+                date: "2024-01-10",
+                resume: "Rejoignez-nous pour nos ateliers de yoga spécialement conçus pour accueillir le printemps.",
+                contenu: "Le printemps approche et avec lui, l'éveil de la nature qui nous entoure...",
+                image: "images/yoga.jpg",
+                status: "published"
+            }
+        ];
+        // Sauvegarder les données d'exemple dans le localStorage
+        saveNewsToLocalStorage();
+    }
     
     // Sample reservations data
     reservationsData = [
@@ -245,7 +262,8 @@ function handleNewsSave() {
         const newId = Math.max(...newsData.map(n => n.id), 0) + 1;
         newsData.push({ id: newId, ...newsItem });
     }
-    
+
+    saveNewsToLocalStorage();
     hideNewsForm();
     loadNewsData();
     showSuccessMessage('Actualité enregistrée avec succès !');
@@ -254,6 +272,7 @@ function handleNewsSave() {
 function deleteNews(id) {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette actualité ?')) {
         newsData = newsData.filter(n => n.id !== id);
+        saveNewsToLocalStorage();
         loadNewsData();
         showSuccessMessage('Actualité supprimée avec succès !');
     }
@@ -414,7 +433,8 @@ function importData() {
                     if (data.news) newsData = data.news;
                     if (data.reservations) reservationsData = data.reservations;
                     if (data.contacts) contactsData = data.contacts;
-                    
+
+                    saveNewsToLocalStorage();
                     loadNewsData();
                     loadReservationsData();
                     loadContactsData();

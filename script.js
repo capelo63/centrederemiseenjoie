@@ -112,10 +112,28 @@ async function loadNews() {
     container.innerHTML = '<div class="loading-message">Chargement des actualités...</div>';
 
     try {
-        // Charger uniquement les actualités locales (Facebook est affiché via le widget)
+        // Charger les actualités depuis le localStorage (créées via l'admin) ou utiliser les données d'exemple
+        let newsToDisplay = sampleNews;
+
+        const savedNews = localStorage.getItem('adminNewsData');
+        if (savedNews) {
+            try {
+                const adminNews = JSON.parse(savedNews);
+                // Filtrer uniquement les actualités publiées
+                const publishedNews = adminNews.filter(n => n.status === 'published');
+                if (publishedNews.length > 0) {
+                    newsToDisplay = publishedNews;
+                }
+            } catch (e) {
+                console.error('Erreur lors du chargement des actualités admin:', e);
+            }
+        }
+
         container.innerHTML = '';
 
-        sampleNews.forEach(item => {
+        // Trier par date décroissante et afficher
+        newsToDisplay.sort((a, b) => new Date(b.date) - new Date(a.date));
+        newsToDisplay.forEach(item => {
             const card = createNewsCard(item);
             container.appendChild(card);
         });

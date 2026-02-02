@@ -291,8 +291,12 @@ async function getCombinedContent() {
 }
 
 function createNewsCard(actualite) {
-    const card = document.createElement('div');
+    const card = document.createElement('a');
     card.className = 'actualite-card';
+    card.href = `actualites.html#news-${actualite.id}`;
+    card.style.textDecoration = 'none';
+    card.style.color = 'inherit';
+    card.style.cursor = 'pointer';
     
     const date = new Date(actualite.date);
     const formattedDate = date.toLocaleDateString('fr-FR', {

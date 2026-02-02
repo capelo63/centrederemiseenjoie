@@ -219,14 +219,14 @@ async function loadSampleData() {
 // Reservations management
 async function loadReservationsData() {
     const tbody = document.getElementById('reservationsTableBody');
-    tbody.innerHTML = '<tr><td colspan="7">Chargement...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9">Chargement...</td></tr>';
 
     try {
         const data = await supabaseRest.select('reservations', 'select=*&order=created_at.desc', accessToken);
         reservationsData = data || [];
     } catch (error) {
         console.error('Erreur chargement réservations:', error.message);
-        tbody.innerHTML = '<tr><td colspan="7">Erreur de chargement</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9">Erreur de chargement</td></tr>';
         return;
     }
 
@@ -236,13 +236,15 @@ async function loadReservationsData() {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${formatDate(reservation.created_at)}</td>
-            <td>${formatDate(reservation.date_arrivee)}</td>
-            <td>${formatDate(reservation.date_depart)}</td>
+            <td>${reservation.nom_prenom || '—'}</td>
+            <td>${reservation.email || '—'}</td>
+            <td>${formatDate(reservation.date_arrivee)} → ${formatDate(reservation.date_depart)}</td>
             <td>${reservation.nombre_personnes}</td>
             <td>${getSejourTypeText(reservation.type_reservation)}</td>
             <td><span class="status-badge status-${reservation.status}">${getReservationStatusText(reservation.status)}</span></td>
             <td>
                 <div class="action-buttons">
+                    <button class="btn-primary btn-sm" onclick="viewReservationDetail(${reservation.id})">Détail</button>
                     <button class="btn-success btn-sm" onclick="updateReservationStatus(${reservation.id}, 'confirmed')">Confirmer</button>
                     <button class="btn-danger btn-sm" onclick="updateReservationStatus(${reservation.id}, 'cancelled')">Annuler</button>
                 </div>
@@ -271,6 +273,26 @@ function filterReservations(status) {
             row.style.display = 'none';
         }
     });
+}
+
+function viewReservationDetail(id) {
+    const r = reservationsData.find(res => res.id === id);
+    if (!r) return;
+    const detail = [
+        `Nom : ${r.nom_prenom || '—'}`,
+        `Email : ${r.email || '—'}`,
+        `Téléphone : ${r.telephone || '—'}`,
+        `Type : ${getSejourTypeText(r.type_reservation)}`,
+        `Du ${formatDate(r.date_arrivee)} au ${formatDate(r.date_depart)}`,
+        `Personnes : ${r.nombre_personnes}`,
+        `Hébergement : ${r.hebergement_type || '—'}`,
+        `Activités : ${r.activites || '—'}`,
+        `Repas : ${r.repas || '—'}`,
+        `Message : ${r.message || '—'}`,
+        `Statut : ${getReservationStatusText(r.status)}`,
+        `Demande reçue le : ${formatDate(r.created_at)}`
+    ].join('\n');
+    alert(detail);
 }
 
 async function updateReservationStatus(id, newStatus) {

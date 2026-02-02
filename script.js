@@ -546,10 +546,13 @@ async function handleReservation() {
     if (typeof supabaseRest !== 'undefined') {
         try {
             await supabaseRest.insert('reservations', {
+                nom_prenom: data.resaNomPrenom,
+                email: data.resaEmail,
+                telephone: data.resaTelephone || null,
                 type_reservation: typeReservation,
                 date_arrivee: data.dateArrivee,
                 date_depart: data.dateDepart,
-                nombre_personnes: data.nombrePersonnes,
+                nombre_personnes: parseInt(data.nombrePersonnes) || 1,
                 hebergement_type: data.hebergementType || null,
                 activites: activites || null,
                 repas: repas || null,
@@ -558,7 +561,7 @@ async function handleReservation() {
             });
         } catch (error) {
             console.error('Erreur envoi réservation:', error);
-            alert('Erreur lors de l\'envoi de votre demande. Veuillez réessayer.');
+            alert('Erreur lors de l\'envoi de votre demande. Veuillez réessayer.\n\nDétail : ' + error.message);
             return;
         }
     }

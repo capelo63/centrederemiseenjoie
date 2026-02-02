@@ -210,70 +210,36 @@ function hideNewsForm() {
     document.getElementById('newsForm').style.display = 'none';
 }
 
-// === SAMPLE DATA for reservations/contacts (inchangé) ===
+// === RESERVATIONS & CONTACTS via Supabase REST ===
 
-function loadSampleData() {
-    // Sample reservations data
-    reservationsData = [
-        {
-            id: 1,
-            dateArrivee: "2024-02-15",
-            dateDepart: "2024-02-18",
-            nombrePersonnes: "2",
-            typeSejourReservation: "weekend",
-            messageReservation: "Première visite, nous sommes très excités !",
-            status: "pending",
-            dateDemande: "2024-01-20"
-        },
-        {
-            id: 2,
-            dateArrivee: "2024-03-01",
-            dateDepart: "2024-03-08",
-            nombrePersonnes: "1",
-            typeSejourReservation: "solo",
-            messageReservation: "Je cherche un moment de ressourcement après une période difficile.",
-            status: "confirmed",
-            dateDemande: "2024-01-18"
-        }
-    ];
-
-    // Sample contacts data
-    contactsData = [
-        {
-            id: 1,
-            nomPrenom: "Marie Dupont",
-            email: "marie.dupont@email.com",
-            message: "Bonjour, j'aimerais avoir des informations sur vos programmes de méditation. Merci !",
-            date: "2024-01-22",
-            status: "unread"
-        },
-        {
-            id: 2,
-            nomPrenom: "Jean Martin",
-            email: "jean.martin@email.com",
-            message: "Excellent séjour la semaine dernière ! Merci pour votre accueil chaleureux.",
-            date: "2024-01-20",
-            status: "read"
-        }
-    ];
-
-    loadReservationsData();
-    loadContactsData();
+async function loadSampleData() {
+    await Promise.all([loadReservationsData(), loadContactsData()]);
 }
 
 // Reservations management
-function loadReservationsData() {
+async function loadReservationsData() {
     const tbody = document.getElementById('reservationsTableBody');
+    tbody.innerHTML = '<tr><td colspan="7">Chargement...</td></tr>';
+
+    try {
+        const data = await supabaseRest.select('reservations', 'select=*&order=created_at.desc', accessToken);
+        reservationsData = data || [];
+    } catch (error) {
+        console.error('Erreur chargement réservations:', error.message);
+        tbody.innerHTML = '<tr><td colspan="7">Erreur de chargement</td></tr>';
+        return;
+    }
+
     tbody.innerHTML = '';
 
     reservationsData.forEach(reservation => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${formatDate(reservation.dateDemande)}</td>
-            <td>${formatDate(reservation.dateArrivee)}</td>
-            <td>${formatDate(reservation.dateDepart)}</td>
-            <td>${reservation.nombrePersonnes}</td>
-            <td>${getSejourTypeText(reservation.typeSejourReservation)}</td>
+            <td>${formatDate(reservation.created_at)}</td>
+            <td>${formatDate(reservation.date_arrivee)}</td>
+            <td>${formatDate(reservation.date_depart)}</td>
+            <td>${reservation.nombre_personnes}</td>
+            <td>${getSejourTypeText(reservation.type_reservation)}</td>
             <td><span class="status-badge status-${reservation.status}">${getReservationStatusText(reservation.status)}</span></td>
             <td>
                 <div class="action-buttons">
@@ -307,25 +273,38 @@ function filterReservations(status) {
     });
 }
 
-function updateReservationStatus(id, newStatus) {
-    const index = reservationsData.findIndex(r => r.id === id);
-    if (index !== -1) {
-        reservationsData[index].status = newStatus;
-        loadReservationsData();
+async function updateReservationStatus(id, newStatus) {
+    try {
+        await supabaseRest.update('reservations', { status: newStatus }, `id=eq.${id}`, accessToken);
+        await loadReservationsData();
         showSuccessMessage(`Réservation ${newStatus === 'confirmed' ? 'confirmée' : 'annulée'} !`);
+    } catch (error) {
+        console.error('Erreur mise à jour réservation:', error.message);
+        alert('Erreur lors de la mise à jour : ' + error.message);
     }
 }
 
 // Contacts management
-function loadContactsData() {
+async function loadContactsData() {
     const tbody = document.getElementById('contactsTableBody');
+    tbody.innerHTML = '<tr><td colspan="6">Chargement...</td></tr>';
+
+    try {
+        const data = await supabaseRest.select('contacts', 'select=*&order=created_at.desc', accessToken);
+        contactsData = data || [];
+    } catch (error) {
+        console.error('Erreur chargement contacts:', error.message);
+        tbody.innerHTML = '<tr><td colspan="6">Erreur de chargement</td></tr>';
+        return;
+    }
+
     tbody.innerHTML = '';
 
     contactsData.forEach(contact => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${formatDate(contact.date)}</td>
-            <td>${contact.nomPrenom}</td>
+            <td>${formatDate(contact.created_at)}</td>
+            <td>${contact.nom_prenom}</td>
             <td>${contact.email}</td>
             <td class="message-cell">${truncateText(contact.message, 50)}</td>
             <td><span class="status-badge status-${contact.status}">${contact.status === 'read' ? 'Lu' : 'Non lu'}</span></td>
@@ -362,16 +341,17 @@ function filterContacts(status) {
 function viewMessage(id) {
     const contact = contactsData.find(c => c.id === id);
     if (contact) {
-        alert(`Message de ${contact.nomPrenom} (${contact.email}):\n\n${contact.message}`);
+        alert(`Message de ${contact.nom_prenom} (${contact.email}):\n\n${contact.message}`);
         markAsRead(id);
     }
 }
 
-function markAsRead(id) {
-    const index = contactsData.findIndex(c => c.id === id);
-    if (index !== -1) {
-        contactsData[index].status = 'read';
-        loadContactsData();
+async function markAsRead(id) {
+    try {
+        await supabaseRest.update('contacts', { status: 'read' }, `id=eq.${id}`, accessToken);
+        await loadContactsData();
+    } catch (error) {
+        console.error('Erreur mise à jour contact:', error.message);
     }
 }
 
@@ -379,16 +359,29 @@ function markAsRead(id) {
 
 async function exportData() {
     let newsFromDb = newsData;
+    let reservationsFromDb = reservationsData;
+    let contactsFromDb = contactsData;
+
     try {
         newsFromDb = await supabaseRest.select('news', 'select=*&order=date.desc', accessToken);
     } catch (e) {
-        console.error('Export: utilisation des données en cache', e);
+        console.error('Export news: utilisation des données en cache', e);
+    }
+    try {
+        reservationsFromDb = await supabaseRest.select('reservations', 'select=*&order=created_at.desc', accessToken);
+    } catch (e) {
+        console.error('Export reservations: utilisation des données en cache', e);
+    }
+    try {
+        contactsFromDb = await supabaseRest.select('contacts', 'select=*&order=created_at.desc', accessToken);
+    } catch (e) {
+        console.error('Export contacts: utilisation des données en cache', e);
     }
 
     const data = {
         news: newsFromDb,
-        reservations: reservationsData,
-        contacts: contactsData,
+        reservations: reservationsFromDb,
+        contacts: contactsFromDb,
         exportDate: new Date().toISOString()
     };
 
@@ -424,12 +417,34 @@ async function importData() {
                         await supabaseRest.insert('news', newsToImport, accessToken);
                     }
 
-                    if (data.reservations) reservationsData = data.reservations;
-                    if (data.contacts) contactsData = data.contacts;
+                    if (data.reservations && data.reservations.length > 0) {
+                        const reservationsToImport = data.reservations.map(r => ({
+                            type_reservation: r.type_reservation,
+                            date_arrivee: r.date_arrivee,
+                            date_depart: r.date_depart,
+                            nombre_personnes: r.nombre_personnes,
+                            hebergement_type: r.hebergement_type || null,
+                            activites: r.activites || null,
+                            repas: r.repas || null,
+                            message: r.message || null,
+                            status: r.status || 'pending'
+                        }));
+                        await supabaseRest.insert('reservations', reservationsToImport, accessToken);
+                    }
+
+                    if (data.contacts && data.contacts.length > 0) {
+                        const contactsToImport = data.contacts.map(c => ({
+                            nom_prenom: c.nom_prenom,
+                            email: c.email,
+                            message: c.message,
+                            status: c.status || 'unread'
+                        }));
+                        await supabaseRest.insert('contacts', contactsToImport, accessToken);
+                    }
 
                     await loadNewsData();
-                    loadReservationsData();
-                    loadContactsData();
+                    await loadReservationsData();
+                    await loadContactsData();
                     showSuccessMessage('Données importées avec succès !');
                 } catch (error) {
                     alert('Erreur lors de l\'importation : ' + error.message);
@@ -466,11 +481,11 @@ function getReservationStatusText(status) {
 
 function getSejourTypeText(type) {
     switch (type) {
-        case 'solo': return 'Retraite solo';
-        case 'groupe': return 'Séjour en groupe';
-        case 'weekend': return 'Weekend ressourcement';
-        case 'semaine': return 'Semaine bien-être';
-        default: return type;
+        case 'activites': return 'Activités à la journée';
+        case 'hebergement': return 'Hébergement seul';
+        case 'hebergement_activites': return 'Hébergement + activités';
+        case 'entreprise': return 'Animation entreprise';
+        default: return type || '—';
     }
 }
 

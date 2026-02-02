@@ -496,7 +496,7 @@ function toggleReservationSections(selectedType) {
     }
 }
 
-function handleReservation() {
+async function handleReservation() {
     const formData = new FormData(document.getElementById('reservationForm'));
     const data = {};
     
@@ -538,9 +538,31 @@ function handleReservation() {
         return;
     }
     
-    // Here you would normally send the data to a server
-    console.log('Réservation soumise:', data);
-    
+    // Préparer les activités en texte
+    const activites = Array.isArray(data.activites) ? data.activites.join(', ') : (data.activites || '');
+    const repas = Array.isArray(data.repas) ? data.repas.join(', ') : (data.repas || '');
+
+    // Envoyer à Supabase
+    if (typeof supabaseRest !== 'undefined') {
+        try {
+            await supabaseRest.insert('reservations', {
+                type_reservation: typeReservation,
+                date_arrivee: data.dateArrivee,
+                date_depart: data.dateDepart,
+                nombre_personnes: data.nombrePersonnes,
+                hebergement_type: data.hebergementType || null,
+                activites: activites || null,
+                repas: repas || null,
+                message: data.messageReservation || null,
+                status: 'pending'
+            });
+        } catch (error) {
+            console.error('Erreur envoi réservation:', error);
+            alert('Erreur lors de l\'envoi de votre demande. Veuillez réessayer.');
+            return;
+        }
+    }
+
     // Show confirmation message based on type
     let confirmationMessage = 'Votre demande de réservation a été envoyée avec succès ! ';
     switch(typeReservation) {
@@ -557,7 +579,7 @@ function handleReservation() {
             confirmationMessage += 'Nous vous contacterons rapidement pour organiser vos animations d\'entreprise.';
             break;
     }
-    
+
     alert(confirmationMessage);
     
     // Reset form and hide all sections
@@ -581,16 +603,29 @@ function handleReservation() {
     }
 }
 
-function handleContact() {
+async function handleContact() {
     const formData = new FormData(document.getElementById('contactForm'));
     const data = Object.fromEntries(formData.entries());
-    
-    // Here you would normally send the data to a server
-    console.log('Message de contact soumis:', data);
-    
+
+    // Envoyer à Supabase
+    if (typeof supabaseRest !== 'undefined') {
+        try {
+            await supabaseRest.insert('contacts', {
+                nom_prenom: data.nomPrenom,
+                email: data.email,
+                message: data.message,
+                status: 'unread'
+            });
+        } catch (error) {
+            console.error('Erreur envoi contact:', error);
+            alert('Erreur lors de l\'envoi de votre message. Veuillez réessayer.');
+            return;
+        }
+    }
+
     // Show confirmation message
     alert('Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.');
-    
+
     // Reset form
     document.getElementById('contactForm').reset();
 }
@@ -811,9 +846,9 @@ const accommodationTypes = {
     }
 };
 
-function initializeAvailabilitySystem() {
-    // Générer des données de disponibilité d'exemple
-    generateSampleAvailabilityData();
+async function initializeAvailabilitySystem() {
+    // Charger les disponibilités depuis Supabase
+    await loadAvailabilityFromSupabase();
     // Écouter les changements du nombre de personnes
     const nombrePersonnesSelect = document.getElementById('nombrePersonnes');
     if (nombrePersonnesSelect) {
@@ -821,38 +856,54 @@ function initializeAvailabilitySystem() {
     }
 }
 
-function generateSampleAvailabilityData() {
-    // Générer des données pour les 6 prochains mois
+async function loadAvailabilityFromSupabase() {
+    // Initialiser toutes les dates des 6 prochains mois comme disponibles
     const today = new Date();
     for (let month = 0; month < 6; month++) {
         const currentMonth = new Date(today.getFullYear(), today.getMonth() + month, 1);
         const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
-        
+
         for (let day = 1; day <= daysInMonth; day++) {
             const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            
-            // Simuler des périodes occupées (environ 30% du temps)
-            const isOccupied = Math.random() < 0.3;
-            
             availabilityData[dateStr] = {
-                available: !isOccupied,
+                available: true,
                 accommodations: {
-                    tipi: !isOccupied || Math.random() < 0.7,
-                    caravane: !isOccupied || Math.random() < 0.8,
-                    dortoir: !isOccupied || Math.random() < 0.9
+                    tipi: true,
+                    caravane: true,
+                    dortoir: true
                 }
             };
-            
-            // S'assurer qu'au moins un hébergement est disponible si la date est marquée comme disponible
-            if (!isOccupied) {
-                const accommodations = availabilityData[dateStr].accommodations;
-                const hasAvailable = Object.values(accommodations).some(available => available);
-                if (!hasAvailable) {
-                    // Rendre au moins un hébergement disponible
-                    const randomAccommodation = Object.keys(accommodations)[Math.floor(Math.random() * 3)];
-                    accommodations[randomAccommodation] = true;
+        }
+    }
+
+    // Charger les réservations confirmées depuis Supabase
+    if (typeof supabaseRest !== 'undefined') {
+        try {
+            const reservations = await supabaseRest.select('reservations', 'select=*&status=eq.confirmed');
+            reservations.forEach(reservation => {
+                if (!reservation.hebergement_type || !reservation.date_arrivee || !reservation.date_depart) return;
+
+                const start = new Date(reservation.date_arrivee + 'T00:00:00');
+                const end = new Date(reservation.date_depart + 'T00:00:00');
+                const accType = reservation.hebergement_type;
+
+                // Marquer l'hébergement comme indisponible pour chaque jour de la réservation
+                const current = new Date(start);
+                while (current < end) {
+                    const dateStr = formatDateForAPI(current);
+                    if (availabilityData[dateStr] && availabilityData[dateStr].accommodations[accType] !== undefined) {
+                        availabilityData[dateStr].accommodations[accType] = false;
+
+                        // Si tous les hébergements sont indisponibles, marquer la date comme indisponible
+                        const accs = availabilityData[dateStr].accommodations;
+                        availabilityData[dateStr].available = Object.values(accs).some(v => v);
+                    }
+                    current.setDate(current.getDate() + 1);
                 }
-            }
+            });
+        } catch (e) {
+            console.error('Erreur chargement disponibilités:', e.message);
+            // En cas d'erreur, tout reste disponible par défaut
         }
     }
 }

@@ -233,8 +233,30 @@
                 return;
             }
 
-            displayNews(1);
+            // Si un hash #news-{id} est présent, trouver la bonne page
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#news-')) {
+                const targetId = parseInt(hash.replace('#news-', ''));
+                const targetIndex = allNews.findIndex(n => n.id === targetId);
+                if (targetIndex !== -1) {
+                    currentPage = Math.floor(targetIndex / itemsPerPage) + 1;
+                }
+            }
+
+            displayNews(currentPage);
             createPagination();
+
+            // Scroll vers l'article ciblé après rendu
+            if (hash) {
+                setTimeout(() => {
+                    const target = document.querySelector(hash);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        target.style.boxShadow = '0 0 0 3px #1F5733';
+                        setTimeout(() => { target.style.boxShadow = ''; }, 2000);
+                    }
+                }, 300);
+            }
         }
 
         function displayNews(page) {
@@ -254,6 +276,7 @@
         function createFullNewsArticle(actualite) {
             const article = document.createElement('article');
             article.className = 'actualite-full';
+            article.id = `news-${actualite.id}`;
 
             const date = new Date(actualite.date);
             const formattedDate = date.toLocaleDateString('fr-FR', {

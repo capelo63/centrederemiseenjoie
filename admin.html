@@ -145,15 +145,15 @@
                 <div class="availability-stats">
                     <div class="stat-card">
                         <h4>Taux d'occupation moyen</h4>
-                        <div class="stat-value">68%</div>
+                        <div class="stat-value" id="statOccupation">—</div>
                     </div>
                     <div class="stat-card">
                         <h4>Réservations ce mois</h4>
-                        <div class="stat-value">23</div>
+                        <div class="stat-value" id="statReservationsMois">—</div>
                     </div>
                     <div class="stat-card">
                         <h4>Hébergement le plus demandé</h4>
-                        <div class="stat-value">Le Tipi</div>
+                        <div class="stat-value" id="statTopHebergement">—</div>
                     </div>
                 </div>
 
@@ -185,37 +185,8 @@
 
                 <div class="accommodation-status">
                     <h3>État des hébergements</h3>
-                    <div class="accommodation-grid">
-                        <div class="accommodation-status-card">
-                            <h4>Le Tipi</h4>
-                            <div class="status-info">
-                                <span class="capacity">4 personnes max</span>
-                                <span class="availability-rate">Disponible à 70%</span>
-                            </div>
-                            <div class="status-actions">
-                                <button class="btn-small" onclick="manageAccommodationAvailability('tipi')">Gérer</button>
-                            </div>
-                        </div>
-                        <div class="accommodation-status-card">
-                            <h4>La Caravane</h4>
-                            <div class="status-info">
-                                <span class="capacity">2 personnes max</span>
-                                <span class="availability-rate">Disponible à 85%</span>
-                            </div>
-                            <div class="status-actions">
-                                <button class="btn-small" onclick="manageAccommodationAvailability('caravane')">Gérer</button>
-                            </div>
-                        </div>
-                        <div class="accommodation-status-card">
-                            <h4>Le Dortoir du Chalet</h4>
-                            <div class="status-info">
-                                <span class="capacity">8 personnes max</span>
-                                <span class="availability-rate">Disponible à 45%</span>
-                            </div>
-                            <div class="status-actions">
-                                <button class="btn-small" onclick="manageAccommodationAvailability('dortoir')">Gérer</button>
-                            </div>
-                        </div>
+                    <div class="accommodation-grid" id="accommodationStatusGrid">
+                        <!-- Chargé dynamiquement -->
                     </div>
                 </div>
             </section>

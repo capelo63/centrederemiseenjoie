@@ -96,6 +96,7 @@ function showAdminPanel() {
     // Load data
     loadNewsData();
     loadSampleData();
+    loadAvailabilitySection();
     loadFacebookSettings();
 }
 
@@ -402,6 +403,279 @@ async function markAsRead(id) {
     } catch (error) {
         console.error('Erreur mise à jour contact:', error.message);
     }
+}
+
+// === DISPONIBILITÉS (basées sur les réservations confirmées Supabase) ===
+
+let adminCalendarDate = new Date();
+let confirmedReservations = [];
+
+const accommodationTypes = {
+    tipi: { name: 'Le Tipi', capacity: 4 },
+    caravane: { name: 'La Caravane', capacity: 2 },
+    dortoir: { name: 'Le Dortoir du Chalet', capacity: 8 }
+};
+
+async function loadAvailabilitySection() {
+    try {
+        confirmedReservations = await supabaseRest.select('reservations', 'select=*&status=eq.confirmed', accessToken);
+    } catch (e) {
+        console.error('Erreur chargement réservations confirmées:', e.message);
+        confirmedReservations = [];
+    }
+    updateAvailabilityStats();
+    renderAdminCalendar();
+    renderAccommodationStatus();
+}
+
+function updateAvailabilityStats() {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    // Réservations ce mois
+    const reservationsThisMonth = confirmedReservations.filter(r => {
+        const start = new Date(r.date_arrivee);
+        const end = new Date(r.date_depart);
+        return (start.getMonth() === currentMonth && start.getFullYear() === currentYear) ||
+               (end.getMonth() === currentMonth && end.getFullYear() === currentYear) ||
+               (start < new Date(currentYear, currentMonth, 1) && end > new Date(currentYear, currentMonth + 1, 0));
+    });
+
+    document.getElementById('statReservationsMois').textContent = reservationsThisMonth.length;
+
+    // Taux d'occupation moyen sur les 3 prochains mois
+    const daysToCheck = 90;
+    let occupiedDays = 0;
+    const totalSlots = daysToCheck * 3; // 3 hébergements
+    for (let d = 0; d < daysToCheck; d++) {
+        const checkDate = new Date(now);
+        checkDate.setDate(checkDate.getDate() + d);
+        const dateStr = formatDateISO(checkDate);
+        Object.keys(accommodationTypes).forEach(accType => {
+            if (isAccommodationOccupied(dateStr, accType)) occupiedDays++;
+        });
+    }
+    const occupationRate = totalSlots > 0 ? Math.round((occupiedDays / totalSlots) * 100) : 0;
+    document.getElementById('statOccupation').textContent = occupationRate + '%';
+
+    // Hébergement le plus demandé
+    const counts = { tipi: 0, caravane: 0, dortoir: 0 };
+    confirmedReservations.forEach(r => {
+        if (r.hebergement_type && counts[r.hebergement_type] !== undefined) {
+            counts[r.hebergement_type]++;
+        }
+    });
+    const topType = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+    document.getElementById('statTopHebergement').textContent =
+        topType[1] > 0 ? accommodationTypes[topType[0]].name : 'Aucune donnée';
+}
+
+function isAccommodationOccupied(dateStr, accType) {
+    return confirmedReservations.some(r => {
+        if (r.hebergement_type !== accType) return false;
+        return dateStr >= r.date_arrivee && dateStr < r.date_depart;
+    });
+}
+
+function formatDateISO(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+}
+
+function renderAdminCalendar() {
+    const grid = document.getElementById('adminCalendarGrid');
+    const monthDisplay = document.getElementById('adminCalendarMonth');
+    if (!grid || !monthDisplay) return;
+
+    const months = ['Janvier','Février','Mars','Avril','Mai','Juin',
+                    'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+    monthDisplay.textContent = `${months[adminCalendarDate.getMonth()]} ${adminCalendarDate.getFullYear()}`;
+
+    grid.innerHTML = '';
+
+    // En-têtes jours
+    ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'].forEach(day => {
+        const el = document.createElement('div');
+        el.className = 'calendar-day day-header';
+        el.textContent = day;
+        grid.appendChild(el);
+    });
+
+    const firstDay = new Date(adminCalendarDate.getFullYear(), adminCalendarDate.getMonth(), 1);
+    const lastDay = new Date(adminCalendarDate.getFullYear(), adminCalendarDate.getMonth() + 1, 0);
+    const startingDay = firstDay.getDay();
+
+    // Jours vides avant
+    for (let i = 0; i < startingDay; i++) {
+        const el = document.createElement('div');
+        el.className = 'calendar-day other-month';
+        grid.appendChild(el);
+    }
+
+    // Jours du mois
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+        const dateStr = `${adminCalendarDate.getFullYear()}-${String(adminCalendarDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const el = document.createElement('div');
+        el.className = 'calendar-day';
+        el.textContent = day;
+
+        // Compter les hébergements occupés ce jour
+        let occupiedCount = 0;
+        const totalAccommodations = Object.keys(accommodationTypes).length;
+        Object.keys(accommodationTypes).forEach(accType => {
+            if (isAccommodationOccupied(dateStr, accType)) occupiedCount++;
+        });
+
+        if (occupiedCount === 0) {
+            el.classList.add('admin-available');
+        } else if (occupiedCount < totalAccommodations) {
+            el.classList.add('admin-partial');
+        } else {
+            el.classList.add('admin-occupied');
+        }
+
+        // Click pour voir le détail du jour
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => showDayDetail(dateStr));
+        grid.appendChild(el);
+    }
+}
+
+function changeAdminMonth(direction) {
+    adminCalendarDate.setMonth(adminCalendarDate.getMonth() + direction);
+    renderAdminCalendar();
+}
+
+function showDayDetail(dateStr) {
+    const reservationsForDay = confirmedReservations.filter(r =>
+        dateStr >= r.date_arrivee && dateStr < r.date_depart
+    );
+
+    const dateDisplay = new Date(dateStr + 'T00:00:00').toLocaleDateString('fr-FR', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    if (reservationsForDay.length === 0) {
+        alert(`${dateDisplay}\n\nTous les hébergements sont disponibles.`);
+        return;
+    }
+
+    let detail = `${dateDisplay}\n\nRéservations confirmées :\n`;
+    reservationsForDay.forEach(r => {
+        const accName = accommodationTypes[r.hebergement_type]
+            ? accommodationTypes[r.hebergement_type].name
+            : (r.hebergement_type || 'Activités seules');
+        detail += `\n• ${r.nom_prenom || '—'} — ${accName}`;
+        detail += `\n  Du ${formatDate(r.date_arrivee)} au ${formatDate(r.date_depart)}`;
+        detail += `\n  ${r.nombre_personnes} personne(s)\n`;
+    });
+
+    // Hébergements encore disponibles
+    const occupiedTypes = reservationsForDay
+        .map(r => r.hebergement_type)
+        .filter(Boolean);
+    const availableTypes = Object.entries(accommodationTypes)
+        .filter(([key]) => !occupiedTypes.includes(key))
+        .map(([, val]) => val.name);
+
+    if (availableTypes.length > 0) {
+        detail += `\nEncore disponible(s) : ${availableTypes.join(', ')}`;
+    } else {
+        detail += '\nComplet ce jour.';
+    }
+
+    alert(detail);
+}
+
+function renderAccommodationStatus() {
+    const grid = document.getElementById('accommodationStatusGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const daysToCheck = 90;
+    const now = new Date();
+
+    Object.entries(accommodationTypes).forEach(([key, acc]) => {
+        // Calculer le taux de disponibilité sur 3 mois
+        let availableDays = 0;
+        for (let d = 0; d < daysToCheck; d++) {
+            const checkDate = new Date(now);
+            checkDate.setDate(checkDate.getDate() + d);
+            const dateStr = formatDateISO(checkDate);
+            if (!isAccommodationOccupied(dateStr, key)) availableDays++;
+        }
+        const availabilityRate = Math.round((availableDays / daysToCheck) * 100);
+
+        // Prochaine réservation
+        const upcoming = confirmedReservations
+            .filter(r => r.hebergement_type === key && r.date_arrivee >= formatDateISO(now))
+            .sort((a, b) => a.date_arrivee.localeCompare(b.date_arrivee));
+        const nextResa = upcoming.length > 0
+            ? `Prochaine : ${formatDate(upcoming[0].date_arrivee)}`
+            : 'Aucune réservation à venir';
+
+        const card = document.createElement('div');
+        card.className = 'accommodation-status-card';
+        card.innerHTML = `
+            <h4>${acc.name}</h4>
+            <div class="status-info">
+                <span class="capacity">${acc.capacity} personnes max</span>
+                <span class="availability-rate">Disponible à ${availabilityRate}%</span>
+            </div>
+            <div class="status-info" style="margin-top:4px;">
+                <span style="font-size:0.85em;color:#666;">${nextResa}</span>
+            </div>
+            <div class="status-actions">
+                <button class="btn-small" onclick="manageAccommodationAvailability('${key}')">Détail</button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function manageAccommodationAvailability(accType) {
+    const acc = accommodationTypes[accType];
+    const now = new Date();
+    const reservations = confirmedReservations
+        .filter(r => r.hebergement_type === accType && r.date_depart >= formatDateISO(now))
+        .sort((a, b) => a.date_arrivee.localeCompare(b.date_arrivee));
+
+    let detail = `${acc.name} (${acc.capacity} pers. max)\n\n`;
+
+    if (reservations.length === 0) {
+        detail += 'Aucune réservation confirmée à venir.';
+    } else {
+        detail += `${reservations.length} réservation(s) à venir :\n`;
+        reservations.forEach(r => {
+            detail += `\n• ${r.nom_prenom || '—'}`;
+            detail += `\n  Du ${formatDate(r.date_arrivee)} au ${formatDate(r.date_depart)}`;
+            detail += `\n  ${r.nombre_personnes} personne(s)\n`;
+        });
+    }
+
+    alert(detail);
+}
+
+function showAvailabilityForm() {
+    alert('Pour modifier les disponibilités, confirmez ou annulez les réservations dans l\'onglet Réservations.\n\nLes disponibilités se mettent à jour automatiquement en fonction des réservations confirmées.');
+}
+
+function exportAvailability() {
+    const data = {
+        generatedAt: new Date().toISOString(),
+        confirmedReservations: confirmedReservations,
+        accommodations: accommodationTypes
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `disponibilites-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
 }
 
 // === EXPORT / IMPORT ===

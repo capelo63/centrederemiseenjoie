@@ -566,24 +566,35 @@ async function handleReservation() {
         }
     }
 
-    // Show confirmation message based on type
-    let confirmationMessage = 'Votre demande de réservation a été envoyée avec succès ! ';
-    switch(typeReservation) {
-        case 'activites':
-            confirmationMessage += 'Nous vous contacterons pour confirmer vos activités.';
-            break;
-        case 'hebergement':
-            confirmationMessage += 'Nous vous contacterons pour confirmer votre hébergement.';
-            break;
-        case 'hebergement_activites':
-            confirmationMessage += 'Nous vous contacterons pour confirmer votre hébergement et vos activités.';
-            break;
-        case 'entreprise':
-            confirmationMessage += 'Nous vous contacterons rapidement pour organiser vos animations d\'entreprise.';
-            break;
+    // Envoyer email de confirmation au client
+    if (typeof emailjs !== 'undefined') {
+        try {
+            const typeLabels = {
+                activites: 'Activités à la journée',
+                hebergement: 'Hébergement',
+                hebergement_activites: 'Hébergement + Activités',
+                entreprise: 'Animation entreprise'
+            };
+            await emailjs.send('service_zjkkwye', 'template_t6h9q3c', {
+                email: data.resaEmail,
+                nom_prenom: data.resaNomPrenom,
+                type_reservation: typeLabels[typeReservation] || typeReservation,
+                date_arrivee: new Date(data.dateArrivee + 'T00:00:00').toLocaleDateString('fr-FR'),
+                date_depart: new Date(data.dateDepart + 'T00:00:00').toLocaleDateString('fr-FR'),
+                nombre_personnes: data.nombrePersonnes,
+                hebergement_type: data.hebergementType || '—',
+                activites: activites || '—',
+                repas: repas || '—',
+                message: data.messageReservation || '—',
+                telephone: data.resaTelephone || '—'
+            });
+        } catch (e) {
+            console.error('Erreur envoi email confirmation:', e);
+        }
     }
 
-    alert(confirmationMessage);
+    // Show confirmation message
+    alert('Votre demande de réservation a été envoyée avec succès !\nUn email de confirmation vous a été envoyé.');
     
     // Reset form and hide all sections
     document.getElementById('reservationForm').reset();

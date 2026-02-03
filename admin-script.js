@@ -361,7 +361,7 @@ async function loadContactsData() {
             <td>
                 <div class="action-buttons">
                     <button class="btn-primary btn-sm" onclick="viewMessage(${contact.id})">Voir</button>
-                    <button class="btn-success btn-sm" onclick="markAsRead(${contact.id})">Marquer lu</button>
+                    <button class="btn-success btn-sm" onclick="openReplyModal(${contact.id})">Répondre</button>
                 </div>
             </td>
         `;
@@ -402,6 +402,74 @@ async function markAsRead(id) {
         await loadContactsData();
     } catch (error) {
         console.error('Erreur mise à jour contact:', error.message);
+    }
+}
+
+// === RÉPONSE AUX CONTACTS ===
+
+const REPLY_TEMPLATE_ID = 'template_xxxxxxx'; // À remplacer par l'ID du template EmailJS
+let currentReplyContactId = null;
+
+function openReplyModal(id) {
+    const contact = contactsData.find(c => c.id === id);
+    if (!contact) return;
+
+    currentReplyContactId = id;
+
+    document.getElementById('replyOriginalMessage').innerHTML =
+        `<strong>${contact.nom_prenom}</strong> (${contact.email})<br>` +
+        `<em>${formatDate(contact.created_at)}</em><br><br>` +
+        contact.message;
+    document.getElementById('replyText').value = '';
+
+    const modal = document.getElementById('replyModal');
+    modal.style.display = 'flex';
+
+    // Fermer en cliquant en dehors
+    modal.onclick = function(e) {
+        if (e.target === modal) closeReplyModal();
+    };
+}
+
+function closeReplyModal() {
+    document.getElementById('replyModal').style.display = 'none';
+    currentReplyContactId = null;
+}
+
+async function sendReply() {
+    const replyText = document.getElementById('replyText').value.trim();
+    if (!replyText) {
+        alert('Veuillez écrire votre réponse.');
+        return;
+    }
+
+    const contact = contactsData.find(c => c.id === currentReplyContactId);
+    if (!contact) return;
+
+    const btn = document.getElementById('sendReplyBtn');
+    btn.textContent = 'Envoi en cours...';
+    btn.disabled = true;
+
+    try {
+        await emailjs.send('service_zjkkwye', REPLY_TEMPLATE_ID, {
+            to_email: contact.email,
+            nom_prenom: contact.nom_prenom,
+            reply_message: replyText,
+            original_message: contact.message
+        });
+
+        // Marquer comme lu
+        await supabaseRest.update('contacts', { status: 'read' }, `id=eq.${contact.id}`, accessToken);
+        await loadContactsData();
+
+        closeReplyModal();
+        showSuccessMessage('Réponse envoyée avec succès !');
+    } catch (error) {
+        console.error('Erreur envoi réponse:', error);
+        alert('Erreur lors de l\'envoi : ' + (error.text || error.message || 'Erreur inconnue'));
+    } finally {
+        btn.textContent = 'Envoyer la réponse';
+        btn.disabled = false;
     }
 }
 

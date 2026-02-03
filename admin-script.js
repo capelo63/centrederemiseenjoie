@@ -298,8 +298,35 @@ function viewReservationDetail(id) {
 async function updateReservationStatus(id, newStatus) {
     try {
         await supabaseRest.update('reservations', { status: newStatus }, `id=eq.${id}`, accessToken);
+
+        // Envoyer email au client si la réservation est confirmée
+        if (newStatus === 'confirmed' && typeof emailjs !== 'undefined') {
+            const r = reservationsData.find(res => res.id === id);
+            if (r && r.email) {
+                try {
+                    await emailjs.send('service_zjkkwye', 'template_blv5ohi', {
+                        email: r.email,
+                        nom_prenom: r.nom_prenom || '',
+                        date_arrivee: formatDate(r.date_arrivee),
+                        date_depart: formatDate(r.date_depart),
+                        nombre_personnes: r.nombre_personnes,
+                        hebergement_type: r.hebergement_type || '—',
+                        activites: r.activites || '—',
+                        type_reservation: getSejourTypeText(r.type_reservation)
+                    });
+                    showSuccessMessage('Réservation confirmée et email envoyé au client !');
+                } catch (e) {
+                    console.error('Erreur envoi email:', e);
+                    showSuccessMessage('Réservation confirmée (email non envoyé).');
+                }
+            } else {
+                showSuccessMessage('Réservation confirmée !');
+            }
+        } else {
+            showSuccessMessage(`Réservation ${newStatus === 'confirmed' ? 'confirmée' : 'annulée'} !`);
+        }
+
         await loadReservationsData();
-        showSuccessMessage(`Réservation ${newStatus === 'confirmed' ? 'confirmée' : 'annulée'} !`);
     } catch (error) {
         console.error('Erreur mise à jour réservation:', error.message);
         alert('Erreur lors de la mise à jour : ' + error.message);

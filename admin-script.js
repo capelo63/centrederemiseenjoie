@@ -305,15 +305,18 @@ async function updateReservationStatus(id, newStatus) {
             const r = reservationsData.find(res => res.id === id);
             if (r && r.email) {
                 try {
+                    const messageContent = `Nous avons le plaisir de vous confirmer votre réservation :\n\n` +
+                        `- Type : ${getSejourTypeText(r.type_reservation)}\n` +
+                        `- Du ${formatDate(r.date_arrivee)} au ${formatDate(r.date_depart)}\n` +
+                        `- Personnes : ${r.nombre_personnes}\n` +
+                        `- Hébergement : ${r.hebergement_type || '—'}\n` +
+                        `- Activités : ${r.activites || '—'}\n\n` +
+                        `À très bientôt au Centre de Remise en Joie !`;
                     await emailjs.send('service_zjkkwye', 'template_blv5ohi', {
                         email: r.email,
                         nom_prenom: r.nom_prenom || '',
-                        date_arrivee: formatDate(r.date_arrivee),
-                        date_depart: formatDate(r.date_depart),
-                        nombre_personnes: r.nombre_personnes,
-                        hebergement_type: r.hebergement_type || '—',
-                        activites: r.activites || '—',
-                        type_reservation: getSejourTypeText(r.type_reservation)
+                        subject: 'Votre réservation est confirmée ! - Centre de Remise en Joie',
+                        message_content: messageContent
                     });
                     showSuccessMessage('Réservation confirmée et email envoyé au client !');
                 } catch (e) {
@@ -407,7 +410,6 @@ async function markAsRead(id) {
 
 // === RÉPONSE AUX CONTACTS ===
 
-const REPLY_TEMPLATE_ID = 'template_xxxxxxx'; // À remplacer par l'ID du template EmailJS
 let currentReplyContactId = null;
 
 function openReplyModal(id) {
@@ -451,11 +453,11 @@ async function sendReply() {
     btn.disabled = true;
 
     try {
-        await emailjs.send('service_zjkkwye', REPLY_TEMPLATE_ID, {
-            to_email: contact.email,
+        await emailjs.send('service_zjkkwye', 'template_blv5ohi', {
+            email: contact.email,
             nom_prenom: contact.nom_prenom,
-            reply_message: replyText,
-            original_message: contact.message
+            subject: 'Re: Votre message - Centre de Remise en Joie',
+            message_content: replyText
         });
 
         // Marquer comme lu

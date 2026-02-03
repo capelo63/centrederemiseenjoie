@@ -221,6 +221,22 @@
                 </div>
             </section>
 
+            <!-- Modale réponse contact -->
+            <div id="replyModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;display:none;align-items:center;justify-content:center;">
+                <div style="background:#fff;border-radius:12px;padding:30px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+                    <h3 style="margin-top:0;color:#1F5733;">Répondre au message</h3>
+                    <div id="replyOriginalMessage" style="background:#f5f5f5;padding:12px;border-radius:8px;margin-bottom:15px;font-size:0.9em;"></div>
+                    <div class="form-group">
+                        <label for="replyText"><strong>Votre réponse :</strong></label>
+                        <textarea id="replyText" rows="6" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:1em;resize:vertical;"></textarea>
+                    </div>
+                    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:15px;">
+                        <button class="btn-secondary" onclick="closeReplyModal()">Annuler</button>
+                        <button class="btn-primary" id="sendReplyBtn" onclick="sendReply()">Envoyer la réponse</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Section Paramètres -->
             <section id="parametres-section" class="admin-section">
                 <div class="section-header">

@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
     createPlaceholderImages();
     setupVideoBackground();
     setupMobileMenu();
-    setupTestimonials();
+    loadTestimonials();
     initializeCalendar();
     initializeAvailabilitySystem();
 });
@@ -713,38 +713,84 @@ function setupMobileMenu() {
 
 // Testimonials functionality
 let currentTestimonialIndex = 0;
-const testimonialsData = [
+let testimonialsData = [];
+
+const defaultTestimonials = [
     {
-        text: "La méditation active proposée et enseignée par Nelly est pour moi un vrai voyage intérieur. Nelly est un bon guide, douce, très à l'écoute, elle sait poser les bonnes questions pour nous aider à débloquer certains de nos fonctionnements qui nous créent des tensions. Elle sait nous mettre à l'aise. Le fait d'être en groupe et de pouvoir parler de nos difficultés sans gêne et sans jugement est déculpabilisant. On se sent moins seule. Au fil du temps, on devient observateur de nos pensées, on se sent plus légère, libérée et avec un regain d'énergie. Merci !",
-        author: "Anne-Marie",
+        texte: "La méditation active proposée et enseignée par Nelly est pour moi un vrai voyage intérieur. Nelly est un bon guide, douce, très à l'écoute, elle sait poser les bonnes questions pour nous aider à débloquer certains de nos fonctionnements qui nous créent des tensions. Elle sait nous mettre à l'aise. Le fait d'être en groupe et de pouvoir parler de nos difficultés sans gêne et sans jugement est déculpabilisant. On se sent moins seule. Au fil du temps, on devient observateur de nos pensées, on se sent plus légère, libérée et avec un regain d'énergie. Merci !",
+        auteur: "Anne-Marie",
         role: "Participante aux ateliers de méditation"
     }
-    // Vous pouvez ajouter plus de témoignages ici
 ];
 
-function setupTestimonials() {
-    // Pour l'instant, avec un seul témoignage, masquer la navigation
-    const nav = document.querySelector('.testimonials-nav');
-    if (testimonialsData.length <= 1 && nav) {
-        nav.style.display = 'none';
+async function loadTestimonials() {
+    testimonialsData = defaultTestimonials;
+
+    if (typeof supabaseRest !== 'undefined') {
+        try {
+            const data = await supabaseRest.select('temoignages', 'select=*&status=eq.published&order=created_at.desc');
+            if (data && data.length > 0) {
+                testimonialsData = data;
+            }
+        } catch (e) {
+            console.error('Erreur chargement témoignages:', e.message);
+        }
     }
+
+    renderTestimonials();
+}
+
+function renderTestimonials() {
+    const slideshow = document.getElementById('testimonialsSlideshow');
+    const nav = document.getElementById('testimonialsNav');
+    const dotsContainer = document.getElementById('testimonialsDots');
+    if (!slideshow) return;
+
+    slideshow.innerHTML = '';
+    if (dotsContainer) dotsContainer.innerHTML = '';
+
+    testimonialsData.forEach((t, i) => {
+        const div = document.createElement('div');
+        div.className = 'testimonial' + (i === 0 ? ' active' : '');
+        div.innerHTML = `
+            <div class="testimonial-content">
+                <div class="quote-icon">&#10077;</div>
+                <p class="testimonial-text">${t.texte}</p>
+                <div class="testimonial-author">
+                    <div class="author-name">${t.auteur}</div>
+                    <div class="author-role">${t.role || ''}</div>
+                </div>
+            </div>
+        `;
+        slideshow.appendChild(div);
+
+        if (dotsContainer) {
+            const dot = document.createElement('span');
+            dot.className = 'testimonial-dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => currentTestimonial(i + 1);
+            dotsContainer.appendChild(dot);
+        }
+    });
+
+    if (nav) {
+        nav.style.display = testimonialsData.length > 1 ? 'flex' : 'none';
+    }
+    currentTestimonialIndex = 0;
 }
 
 function changeTestimonial(direction) {
     if (testimonialsData.length <= 1) return;
-    
+
     const testimonialElements = document.querySelectorAll('.testimonial');
     const dots = document.querySelectorAll('.testimonial-dot');
-    
-    // Remove active class from current testimonial
+
     if (testimonialElements[currentTestimonialIndex]) {
         testimonialElements[currentTestimonialIndex].classList.remove('active');
     }
     if (dots[currentTestimonialIndex]) {
         dots[currentTestimonialIndex].classList.remove('active');
     }
-    
-    // Calculate new index
+
     currentTestimonialIndex += direction;
     if (currentTestimonialIndex >= testimonialsData.length) {
         currentTestimonialIndex = 0;

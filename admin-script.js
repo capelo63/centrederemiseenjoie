@@ -4,6 +4,7 @@ let accessToken = null;
 let newsData = [];
 let reservationsData = [];
 let contactsData = [];
+let temoignagesData = [];
 
 // Initialize admin panel
 document.addEventListener('DOMContentLoaded', function() {
@@ -96,6 +97,7 @@ function showAdminPanel() {
     // Load data
     loadNewsData();
     loadSampleData();
+    loadTemoignagesData();
     loadAvailabilitySection();
     loadFacebookSettings();
 }
@@ -472,6 +474,121 @@ async function sendReply() {
     } finally {
         btn.textContent = 'Envoyer la réponse';
         btn.disabled = false;
+    }
+}
+
+// === TÉMOIGNAGES via Supabase REST ===
+
+async function loadTemoignagesData() {
+    const tbody = document.getElementById('temoignagesTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="4">Chargement...</td></tr>';
+
+    try {
+        const data = await supabaseRest.select('temoignages', 'select=*&order=created_at.desc', accessToken);
+        temoignagesData = data || [];
+    } catch (error) {
+        console.error('Erreur chargement témoignages:', error.message);
+        tbody.innerHTML = '<tr><td colspan="4">Erreur de chargement</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = '';
+
+    temoignagesData.forEach(t => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><strong>${t.auteur}</strong><br><small>${t.role || ''}</small></td>
+            <td class="message-cell">${truncateText(t.texte, 80)}</td>
+            <td><span class="status-badge status-${t.status}">${t.status === 'published' ? 'Publié' : 'Brouillon'}</span></td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn-primary btn-sm" onclick="editTemoignage(${t.id})">Modifier</button>
+                    <button class="btn-sm" onclick="toggleTemoignageStatus(${t.id})">${t.status === 'published' ? 'Masquer' : 'Publier'}</button>
+                    <button class="btn-danger btn-sm" onclick="deleteTemoignage(${t.id})">Supprimer</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function showAddTestimonialForm() {
+    document.getElementById('testimonialFormTitle').textContent = 'Nouveau témoignage';
+    document.getElementById('temoignageForm').reset();
+    document.getElementById('temoignageId').value = '';
+    document.getElementById('testimonialForm').style.display = 'block';
+}
+
+function hideTestimonialForm() {
+    document.getElementById('testimonialForm').style.display = 'none';
+}
+
+function editTemoignage(id) {
+    const t = temoignagesData.find(item => item.id === id);
+    if (!t) return;
+    document.getElementById('testimonialFormTitle').textContent = 'Modifier le témoignage';
+    document.getElementById('temoignageId').value = t.id;
+    document.getElementById('temoignageAuteur').value = t.auteur;
+    document.getElementById('temoignageRole').value = t.role || '';
+    document.getElementById('temoignageTexte').value = t.texte;
+    document.getElementById('testimonialForm').style.display = 'block';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('temoignageForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleTemoignageSave();
+        });
+    }
+});
+
+async function handleTemoignageSave() {
+    const id = document.getElementById('temoignageId').value;
+    const item = {
+        auteur: document.getElementById('temoignageAuteur').value,
+        role: document.getElementById('temoignageRole').value || null,
+        texte: document.getElementById('temoignageTexte').value,
+        status: 'published'
+    };
+
+    try {
+        if (id) {
+            await supabaseRest.update('temoignages', item, `id=eq.${id}`, accessToken);
+        } else {
+            await supabaseRest.insert('temoignages', item, accessToken);
+        }
+        hideTestimonialForm();
+        await loadTemoignagesData();
+        showSuccessMessage('Témoignage enregistré !');
+    } catch (error) {
+        alert('Erreur : ' + error.message);
+    }
+}
+
+async function toggleTemoignageStatus(id) {
+    const t = temoignagesData.find(item => item.id === id);
+    if (!t) return;
+    const newStatus = t.status === 'published' ? 'draft' : 'published';
+    try {
+        await supabaseRest.update('temoignages', { status: newStatus }, `id=eq.${id}`, accessToken);
+        await loadTemoignagesData();
+        showSuccessMessage(`Témoignage ${newStatus === 'published' ? 'publié' : 'masqué'} !`);
+    } catch (error) {
+        alert('Erreur : ' + error.message);
+    }
+}
+
+async function deleteTemoignage(id) {
+    if (!confirm('Supprimer ce témoignage ?')) return;
+    try {
+        await supabaseRest.remove('temoignages', `id=eq.${id}`, accessToken);
+        await loadTemoignagesData();
+        showSuccessMessage('Témoignage supprimé !');
+    } catch (error) {
+        alert('Erreur : ' + error.message);
     }
 }
 

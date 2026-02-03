@@ -663,25 +663,14 @@
         <section class="testimonials">
             <h3>Témoignages</h3>
             <div class="testimonials-container">
-                <div class="testimonials-slideshow">
-                    <div class="testimonial active">
-                        <div class="testimonial-content">
-                            <div class="quote-icon">❝</div>
-                            <p class="testimonial-text">La méditation active proposée et enseignée par Nelly est pour moi un vrai voyage intérieur. Nelly est un bon guide, douce, très à l'écoute, elle sait poser les bonnes questions pour nous aider à débloquer certains de nos fonctionnements qui nous créent des tensions. Elle sait nous mettre à l'aise. Le fait d'être en groupe et de pouvoir parler de nos difficultés sans gêne et sans jugement est déculpabilisant. On se sent moins seule. Au fil du temps, on devient observateur de nos pensées, on se sent plus légère, libérée et avec un regain d'énergie. Merci !</p>
-                            <div class="testimonial-author">
-                                <div class="author-name">Anne-Marie</div>
-                                <div class="author-role">Participante aux ateliers de méditation</div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="testimonials-slideshow" id="testimonialsSlideshow">
+                    <!-- Chargé dynamiquement depuis Supabase -->
                 </div>
 
-                <div class="testimonials-nav">
-                    <button class="testimonial-prev" onclick="changeTestimonial(-1)">❮</button>
-                    <div class="testimonials-dots">
-                        <span class="testimonial-dot active" onclick="currentTestimonial(1)"></span>
-                    </div>
-                    <button class="testimonial-next" onclick="changeTestimonial(1)">❯</button>
+                <div class="testimonials-nav" id="testimonialsNav" style="display:none;">
+                    <button class="testimonial-prev" onclick="changeTestimonial(-1)">&#10094;</button>
+                    <div class="testimonials-dots" id="testimonialsDots"></div>
+                    <button class="testimonial-next" onclick="changeTestimonial(1)">&#10095;</button>
                 </div>
             </div>
         </section>

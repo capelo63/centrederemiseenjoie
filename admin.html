@@ -39,6 +39,7 @@
             <button class="nav-btn active" onclick="showSection('actualites')">Actualités</button>
             <button class="nav-btn" onclick="showSection('reservations')">Réservations</button>
             <button class="nav-btn" onclick="showSection('disponibilites')">Disponibilités</button>
+            <button class="nav-btn" onclick="showSection('temoignages')">Témoignages</button>
             <button class="nav-btn" onclick="showSection('contacts')">Messages</button>
             <button class="nav-btn" onclick="showSection('parametres')">Paramètres</button>
         </nav>
@@ -189,6 +190,51 @@
                         <!-- Chargé dynamiquement -->
                     </div>
                 </div>
+            </section>
+
+            <!-- Section Témoignages -->
+            <section id="temoignages-section" class="admin-section">
+                <div class="section-header">
+                    <h2>Gestion des Témoignages</h2>
+                    <button class="btn-primary" onclick="showAddTestimonialForm()">Ajouter un témoignage</button>
+                </div>
+
+                <div id="testimonialForm" style="display:none;" class="news-form">
+                    <h3 id="testimonialFormTitle">Nouveau témoignage</h3>
+                    <form id="temoignageForm">
+                        <input type="hidden" id="temoignageId">
+                        <div class="form-group">
+                            <label for="temoignageAuteur">Prénom / Nom :</label>
+                            <input type="text" id="temoignageAuteur" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="temoignageRole">Rôle / Contexte :</label>
+                            <input type="text" id="temoignageRole" placeholder="Ex : Participante aux ateliers de méditation">
+                        </div>
+                        <div class="form-group">
+                            <label for="temoignageTexte">Témoignage :</label>
+                            <textarea id="temoignageTexte" rows="6" required></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Enregistrer</button>
+                            <button type="button" class="btn-secondary" onclick="hideTestimonialForm()">Annuler</button>
+                        </div>
+                    </form>
+                </div>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Auteur</th>
+                            <th>Témoignage</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="temoignagesTableBody">
+                        <!-- Chargé dynamiquement -->
+                    </tbody>
+                </table>
             </section>
 
             <!-- Section Messages -->

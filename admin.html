@@ -299,8 +299,13 @@
                                 <textarea id="evenementDescription" rows="5"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="evenementImage">URL de l'image :</label>
-                                <input type="url" id="evenementImage" placeholder="https://...">
+                                <label for="evenementImageFile">Image :</label>
+                                <input type="file" id="evenementImageFile" accept="image/*" onchange="previewEvenementImage(this)">
+                                <div id="evenementImagePreview" style="margin-top:10px;display:none;">
+                                    <img id="evenementImagePreviewImg" src="" alt="Aperçu" style="max-width:300px;max-height:200px;border-radius:8px;object-fit:cover;">
+                                    <button type="button" onclick="clearEvenementImage()" style="display:block;margin-top:6px;background:none;border:none;color:#c00;cursor:pointer;font-size:0.9em;">Supprimer l'image</button>
+                                </div>
+                                <input type="hidden" id="evenementImage">
                             </div>
                             <div class="form-actions">
                                 <button type="submit" class="btn-primary">Enregistrer</button>

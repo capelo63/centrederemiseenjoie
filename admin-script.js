@@ -1310,6 +1310,8 @@ function showEvenementForm(id) {
         document.getElementById('evenementResume').value = '';
         document.getElementById('evenementDescription').value = '';
         document.getElementById('evenementImage').value = '';
+        document.getElementById('evenementImageFile').value = '';
+        document.getElementById('evenementImagePreview').style.display = 'none';
     }
 }
 
@@ -1329,7 +1331,55 @@ function editEvenement(id) {
     document.getElementById('evenementResume').value = e.resume || '';
     document.getElementById('evenementDescription').value = e.description || '';
     document.getElementById('evenementImage').value = e.image_url || '';
+    document.getElementById('evenementImageFile').value = '';
+    if (e.image_url) {
+        document.getElementById('evenementImagePreviewImg').src = e.image_url;
+        document.getElementById('evenementImagePreview').style.display = 'block';
+    } else {
+        document.getElementById('evenementImagePreview').style.display = 'none';
+    }
     showEvenementForm(id);
+}
+
+// --- Image upload helpers ---
+
+function compressImage(file, maxWidth, quality) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                let w = img.width;
+                let h = img.height;
+                if (w > maxWidth) {
+                    h = Math.round(h * maxWidth / w);
+                    w = maxWidth;
+                }
+                canvas.width = w;
+                canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function previewEvenementImage(input) {
+    if (!input.files || !input.files[0]) return;
+    compressImage(input.files[0], 800, 0.8).then(dataUrl => {
+        document.getElementById('evenementImage').value = dataUrl;
+        document.getElementById('evenementImagePreviewImg').src = dataUrl;
+        document.getElementById('evenementImagePreview').style.display = 'block';
+    });
+}
+
+function clearEvenementImage() {
+    document.getElementById('evenementImage').value = '';
+    document.getElementById('evenementImageFile').value = '';
+    document.getElementById('evenementImagePreview').style.display = 'none';
 }
 
 async function handleEvenementSave() {

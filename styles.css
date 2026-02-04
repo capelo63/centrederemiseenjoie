@@ -1711,35 +1711,41 @@ footer {
         right: -100%;
         width: 100%;
         height: 100vh;
-        background: linear-gradient(135deg, rgba(31, 87, 51, 0.98), rgba(21, 59, 35, 0.98));
-        backdrop-filter: blur(20px);
+        background: linear-gradient(135deg, #1F5733, #153B23);
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 2rem;
+        gap: 0;
         transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         padding: 2rem;
         border-radius: 0;
         border: none;
     }
-    
+
     .nav-links.active {
         right: 0;
     }
-    
+
     .nav-links a {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         padding: 1rem 2rem;
         text-align: center;
-        width: 80%;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        margin: 0.5rem 0;
+        width: 70%;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 0;
     }
-    
+
+    .nav-links li:last-child a {
+        border-bottom: none;
+    }
+
     .nav-links a:hover {
-        background: rgba(255, 255, 255, 0.25);
-        transform: scale(1.05);
+        background: rgba(255, 255, 255, 0.15);
+        transform: none;
+        box-shadow: none;
     }
     
     .hero h2 {

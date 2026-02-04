@@ -1,15 +1,22 @@
 // Slideshow functionality
 let currentSlideIndex = 0;
+let previousSlideIndex = 0;
 const slides = document.querySelectorAll('.slide');
 const dots = document.querySelectorAll('.dot');
 
 function showSlide(index) {
     slides.forEach((slide, i) => {
-        slide.classList.toggle('active', i === index);
+        slide.classList.remove('active', 'prev-slide');
+        if (i === index) {
+            slide.classList.add('active');
+        } else if (i === previousSlideIndex) {
+            slide.classList.add('prev-slide');
+        }
     });
     dots.forEach((dot, i) => {
         dot.classList.toggle('active', i === index);
     });
+    previousSlideIndex = index;
 }
 
 function changeSlide(direction) {

@@ -1824,6 +1824,16 @@ footer {
     
     .slideshow {
         height: 250px;
+        padding-top: 0;
+    }
+
+    .slide {
+        height: 250px;
+        top: 0;
+    }
+
+    .slide img {
+        height: 250px;
     }
     
     .contact-content {
@@ -2297,6 +2307,13 @@ footer {
 
     .event-card {
         padding: 1.2rem;
+    }
+
+    .event-card:hover,
+    .activite-item:hover,
+    .pratique-card:hover {
+        transform: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     }
 
     .pratique-card {

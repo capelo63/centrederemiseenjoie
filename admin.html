@@ -203,6 +203,7 @@
                 <div style="display:flex;gap:10px;margin-bottom:20px;">
                     <button class="btn-primary" id="progTabActivites" onclick="showProgrammeSubTab('activites')" style="opacity:1;">Activités</button>
                     <button class="btn-secondary" id="progTabEvenements" onclick="showProgrammeSubTab('evenements')" style="opacity:0.6;">Événements</button>
+                    <button class="btn-secondary" id="progTabPratiques" onclick="showProgrammeSubTab('pratiques')" style="opacity:0.6;">Pratiques</button>
                 </div>
 
                 <!-- Sous-section Activités -->
@@ -325,6 +326,68 @@
                             </tr>
                         </thead>
                         <tbody id="evenementsTableBody">
+                            <!-- Chargé dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Sous-section Pratiques -->
+                <div id="progPratiquesPanel" style="display:none;">
+                    <div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
+                        <button class="btn-primary" onclick="showPratiqueForm()">Ajouter un lieu de pratique</button>
+                    </div>
+
+                    <div id="pratiqueFormPanel" style="display:none;" class="news-form">
+                        <h3 id="pratiqueFormTitle">Nouveau lieu de pratique</h3>
+                        <form id="pratiqueForm">
+                            <input type="hidden" id="pratiqueId">
+                            <div class="form-group">
+                                <label for="pratiqueTitre">Titre :</label>
+                                <input type="text" id="pratiqueTitre" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pratiqueResume">Résumé (affiché dans la carte) :</label>
+                                <textarea id="pratiqueResume" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="pratiqueDescription">Description complète (affichée au clic) :</label>
+                                <textarea id="pratiqueDescription" rows="5"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="pratiqueImageFile">Image :</label>
+                                <input type="file" id="pratiqueImageFile" accept="image/*" onchange="previewPratiqueImage(this)">
+                                <div id="pratiqueImagePreview" style="margin-top:10px;display:none;">
+                                    <img id="pratiqueImagePreviewImg" src="" alt="Aperçu" style="max-width:300px;max-height:200px;border-radius:8px;object-fit:cover;">
+                                    <button type="button" onclick="clearPratiqueImage()" style="display:block;margin-top:6px;background:none;border:none;color:#c00;cursor:pointer;font-size:0.9em;">Supprimer l'image</button>
+                                </div>
+                                <input type="hidden" id="pratiqueImage">
+                            </div>
+                            <div class="form-group">
+                                <label for="pratiqueVideo">URL vidéo (optionnel, ex : videos/yourte.webm) :</label>
+                                <input type="text" id="pratiqueVideo" placeholder="videos/yourte.webm">
+                            </div>
+                            <div class="form-group">
+                                <label for="pratiqueOrdre">Ordre d'affichage :</label>
+                                <input type="number" id="pratiqueOrdre" value="0" min="0" style="max-width:80px;">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">Enregistrer</button>
+                                <button type="button" class="btn-secondary" onclick="hidePratiqueForm()">Annuler</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Ordre</th>
+                                <th>Titre</th>
+                                <th>Média</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pratiquesTableBody">
                             <!-- Chargé dynamiquement -->
                         </tbody>
                     </table>

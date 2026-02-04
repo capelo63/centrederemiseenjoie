@@ -40,6 +40,10 @@ function setupEventListeners() {
         e.preventDefault();
         handleEvenementSave();
     });
+    document.getElementById('pratiqueForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        handlePratiqueSave();
+    });
 }
 
 // === AUTHENTICATION via Supabase REST ===
@@ -1125,26 +1129,22 @@ function saveFacebookConfig(config) {
 // === PROGRAMME MANAGEMENT ===
 
 function showProgrammeSubTab(tab) {
-    const actBtn = document.getElementById('progTabActivites');
-    const evtBtn = document.getElementById('progTabEvenements');
-    const actPanel = document.getElementById('progActivitesPanel');
-    const evtPanel = document.getElementById('progEvenementsPanel');
-
-    if (tab === 'activites') {
-        actBtn.className = 'btn-primary'; actBtn.style.opacity = '1';
-        evtBtn.className = 'btn-secondary'; evtBtn.style.opacity = '0.6';
-        actPanel.style.display = 'block';
-        evtPanel.style.display = 'none';
-    } else {
-        evtBtn.className = 'btn-primary'; evtBtn.style.opacity = '1';
-        actBtn.className = 'btn-secondary'; actBtn.style.opacity = '0.6';
-        evtPanel.style.display = 'block';
-        actPanel.style.display = 'none';
-    }
+    const tabs = ['activites', 'evenements', 'pratiques'];
+    tabs.forEach(t => {
+        const btn = document.getElementById('progTab' + t.charAt(0).toUpperCase() + t.slice(1));
+        const panel = document.getElementById('prog' + t.charAt(0).toUpperCase() + t.slice(1) + 'Panel');
+        if (t === tab) {
+            btn.className = 'btn-primary'; btn.style.opacity = '1';
+            panel.style.display = 'block';
+        } else {
+            btn.className = 'btn-secondary'; btn.style.opacity = '0.6';
+            panel.style.display = 'none';
+        }
+    });
 }
 
 async function loadProgrammeAdminData() {
-    await Promise.all([loadActivitesData(), loadEvenementsData()]);
+    await Promise.all([loadActivitesData(), loadEvenementsData(), loadPratiquesData()]);
 }
 
 // --- Activités CRUD ---
@@ -1428,6 +1428,149 @@ async function deleteEvenement(id) {
         await supabaseRest.remove('programme_evenements', `id=eq.${id}`, accessToken);
         await loadEvenementsData();
         showSuccessMessage('Événement supprimé !');
+    } catch (error) {
+        alert('Erreur : ' + error.message);
+    }
+}
+
+// --- Pratiques CRUD ---
+
+let pratiquesData = [];
+
+async function loadPratiquesData() {
+    const tbody = document.getElementById('pratiquesTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="5">Chargement...</td></tr>';
+
+    try {
+        const data = await supabaseRest.select('programme_pratiques', 'select=*&order=ordre.asc,created_at.desc', accessToken);
+        pratiquesData = data || [];
+    } catch (error) {
+        console.error('Erreur chargement pratiques:', error.message);
+        tbody.innerHTML = '<tr><td colspan="5">Erreur de chargement</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = '';
+    pratiquesData.forEach(p => {
+        const mediaLabel = p.video_url ? 'Vidéo' : (p.image_url ? 'Image' : '-');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${p.ordre || 0}</td>
+            <td><strong>${p.titre}</strong></td>
+            <td>${mediaLabel}</td>
+            <td><span class="status-badge status-${p.status}">${p.status === 'published' ? 'Publié' : 'Brouillon'}</span></td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn-primary btn-sm" onclick="editPratique(${p.id})">Modifier</button>
+                    <button class="btn-sm" onclick="togglePratiqueStatus(${p.id})">${p.status === 'published' ? 'Masquer' : 'Publier'}</button>
+                    <button class="btn-danger btn-sm" onclick="deletePratique(${p.id})">Supprimer</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function showPratiqueForm(id) {
+    document.getElementById('pratiqueFormPanel').style.display = 'block';
+    document.getElementById('pratiqueFormTitle').textContent = id ? 'Modifier le lieu de pratique' : 'Nouveau lieu de pratique';
+    if (!id) {
+        document.getElementById('pratiqueId').value = '';
+        document.getElementById('pratiqueTitre').value = '';
+        document.getElementById('pratiqueResume').value = '';
+        document.getElementById('pratiqueDescription').value = '';
+        document.getElementById('pratiqueImage').value = '';
+        document.getElementById('pratiqueImageFile').value = '';
+        document.getElementById('pratiqueImagePreview').style.display = 'none';
+        document.getElementById('pratiqueVideo').value = '';
+        document.getElementById('pratiqueOrdre').value = pratiquesData.length;
+    }
+}
+
+function hidePratiqueForm() {
+    document.getElementById('pratiqueFormPanel').style.display = 'none';
+}
+
+function editPratique(id) {
+    const p = pratiquesData.find(x => x.id === id);
+    if (!p) return;
+    document.getElementById('pratiqueId').value = p.id;
+    document.getElementById('pratiqueTitre').value = p.titre;
+    document.getElementById('pratiqueResume').value = p.resume || '';
+    document.getElementById('pratiqueDescription').value = p.description || '';
+    document.getElementById('pratiqueImage').value = p.image_url || '';
+    document.getElementById('pratiqueImageFile').value = '';
+    document.getElementById('pratiqueVideo').value = p.video_url || '';
+    document.getElementById('pratiqueOrdre').value = p.ordre || 0;
+    if (p.image_url) {
+        document.getElementById('pratiqueImagePreviewImg').src = p.image_url;
+        document.getElementById('pratiqueImagePreview').style.display = 'block';
+    } else {
+        document.getElementById('pratiqueImagePreview').style.display = 'none';
+    }
+    showPratiqueForm(id);
+}
+
+function previewPratiqueImage(input) {
+    if (!input.files || !input.files[0]) return;
+    compressImage(input.files[0], 800, 0.8).then(dataUrl => {
+        document.getElementById('pratiqueImage').value = dataUrl;
+        document.getElementById('pratiqueImagePreviewImg').src = dataUrl;
+        document.getElementById('pratiqueImagePreview').style.display = 'block';
+    });
+}
+
+function clearPratiqueImage() {
+    document.getElementById('pratiqueImage').value = '';
+    document.getElementById('pratiqueImageFile').value = '';
+    document.getElementById('pratiqueImagePreview').style.display = 'none';
+}
+
+async function handlePratiqueSave() {
+    const id = document.getElementById('pratiqueId').value;
+    const item = {
+        titre: document.getElementById('pratiqueTitre').value,
+        resume: document.getElementById('pratiqueResume').value || null,
+        description: document.getElementById('pratiqueDescription').value || null,
+        image_url: document.getElementById('pratiqueImage').value || null,
+        video_url: document.getElementById('pratiqueVideo').value || null,
+        ordre: parseInt(document.getElementById('pratiqueOrdre').value) || 0,
+        status: 'published'
+    };
+
+    try {
+        if (id) {
+            await supabaseRest.update('programme_pratiques', item, `id=eq.${id}`, accessToken);
+        } else {
+            await supabaseRest.insert('programme_pratiques', item, accessToken);
+        }
+        hidePratiqueForm();
+        await loadPratiquesData();
+        showSuccessMessage('Lieu de pratique enregistré !');
+    } catch (error) {
+        alert('Erreur : ' + error.message);
+    }
+}
+
+async function togglePratiqueStatus(id) {
+    const p = pratiquesData.find(x => x.id === id);
+    if (!p) return;
+    const newStatus = p.status === 'published' ? 'draft' : 'published';
+    try {
+        await supabaseRest.update('programme_pratiques', { status: newStatus }, `id=eq.${id}`, accessToken);
+        await loadPratiquesData();
+    } catch (error) {
+        alert('Erreur : ' + error.message);
+    }
+}
+
+async function deletePratique(id) {
+    if (!confirm('Supprimer ce lieu de pratique ?')) return;
+    try {
+        await supabaseRest.remove('programme_pratiques', `id=eq.${id}`, accessToken);
+        await loadPratiquesData();
+        showSuccessMessage('Lieu de pratique supprimé !');
     } catch (error) {
         alert('Erreur : ' + error.message);
     }

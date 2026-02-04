@@ -965,20 +965,24 @@ function clearAccommodationSelection() {
 
 let programmeActivites = [];
 let programmeEvenements = [];
+let programmePratiques = [];
 
 async function loadProgrammeData() {
     try {
-        const [activites, evenements] = await Promise.all([
+        const [activites, evenements, pratiques] = await Promise.all([
             supabaseRest.select('programme_activites', 'select=*&status=eq.published&order=ordre.asc'),
-            supabaseRest.select('programme_evenements', 'select=*&status=eq.published&order=date_debut.asc')
+            supabaseRest.select('programme_evenements', 'select=*&status=eq.published&order=date_debut.asc'),
+            supabaseRest.select('programme_pratiques', 'select=*&status=eq.published&order=ordre.asc')
         ]);
         programmeActivites = activites || [];
         programmeEvenements = evenements || [];
+        programmePratiques = pratiques || [];
     } catch (e) {
         console.error('Erreur chargement programme:', e.message);
     }
     renderActivites();
     renderEvenements();
+    renderPratiques();
 }
 
 function renderActivites() {
@@ -1042,6 +1046,8 @@ function openProgrammeDetail(type, id) {
     let item;
     if (type === 'activite') {
         item = programmeActivites.find(a => a.id === id);
+    } else if (type === 'pratique') {
+        item = programmePratiques.find(p => p.id === id);
     } else {
         item = programmeEvenements.find(e => e.id === id);
     }
@@ -1056,6 +1062,19 @@ function openProgrammeDetail(type, id) {
             <div class="programme-detail">
                 ${item.image_url ? `<img src="${item.image_url}" alt="${item.titre}" class="programme-detail-img">` : ''}
                 <h3>${item.icone || ''} ${item.titre}</h3>
+                <div class="programme-detail-text">${item.description || ''}</div>
+            </div>`;
+    } else if (type === 'pratique') {
+        let mediaHtml = '';
+        if (item.video_url) {
+            mediaHtml = `<video autoplay muted loop playsinline style="width:100%;border-radius:12px;margin-bottom:20px;max-height:350px;object-fit:cover;"><source src="${item.video_url}" type="video/webm"></video>`;
+        } else if (item.image_url) {
+            mediaHtml = `<img src="${item.image_url}" alt="${item.titre}" class="programme-detail-img">`;
+        }
+        html = `
+            <div class="programme-detail">
+                ${mediaHtml}
+                <h3>${item.titre}</h3>
                 <div class="programme-detail-text">${item.description || ''}</div>
             </div>`;
     } else {
@@ -1084,4 +1103,31 @@ function openProgrammeDetail(type, id) {
 
 function closeProgrammeModal() {
     document.getElementById('programmeModal').style.display = 'none';
+}
+
+function renderPratiques() {
+    const grid = document.getElementById('pratiquesGrid');
+    if (!grid) return;
+
+    if (programmePratiques.length === 0) {
+        grid.innerHTML = '<p style="text-align:center;color:#888;">Aucun lieu de pratique pour le moment.</p>';
+        return;
+    }
+
+    grid.innerHTML = programmePratiques.map(p => {
+        let mediaHtml = '';
+        if (p.video_url) {
+            mediaHtml = `<video autoplay muted loop playsinline><source src="${p.video_url}" type="video/webm"></video>`;
+        } else if (p.image_url) {
+            mediaHtml = `<img src="${p.image_url}" alt="${p.titre}" loading="lazy">`;
+        }
+        return `
+        <div class="pratique-card" onclick="openProgrammeDetail('pratique', ${p.id})">
+            <div class="pratique-media">${mediaHtml}</div>
+            <div class="pratique-content">
+                <h5>${p.titre}</h5>
+                <p>${p.resume || ''}</p>
+            </div>
+        </div>`;
+    }).join('');
 }

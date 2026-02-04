@@ -1825,15 +1825,46 @@ footer {
     .slideshow {
         height: 250px;
         padding-top: 0;
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .slideshow::-webkit-scrollbar {
+        display: none;
     }
 
     .slide {
+        position: relative;
+        top: auto;
+        left: auto;
+        min-width: 100%;
         height: 250px;
-        top: 0;
+        flex-shrink: 0;
+        scroll-snap-align: center;
+        opacity: 1;
+        visibility: visible;
+        z-index: auto;
+        transition: none;
+        will-change: auto;
+    }
+
+    .slide.active,
+    .slide.prev-slide {
+        opacity: 1;
+        visibility: visible;
+        z-index: auto;
+        transition: none;
     }
 
     .slide img {
         height: 250px;
+    }
+
+    .prev, .next, .dots {
+        display: none;
     }
     
     .contact-content {

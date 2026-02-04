@@ -42,6 +42,15 @@ if (!isMobile) {
     slideshowInterval = setInterval(() => {
         changeSlide(1);
     }, 5000);
+} else {
+    // Masquer l'indicateur de swipe au premier défilement
+    const slideshow = document.querySelector('.slideshow');
+    const swipeHint = document.getElementById('swipeHint');
+    if (slideshow && swipeHint) {
+        slideshow.addEventListener('scroll', function() {
+            swipeHint.style.display = 'none';
+        }, { once: true });
+    }
 }
 
 

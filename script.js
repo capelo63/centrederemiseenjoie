@@ -4,26 +4,9 @@ const slides = document.querySelectorAll('.slide');
 const dots = document.querySelectorAll('.dot');
 
 function showSlide(index) {
-    // Force layout to prevent flickering in Firefox
-    document.body.offsetHeight;
-    
     slides.forEach((slide, i) => {
-        if (i === index) {
-            slide.style.display = 'block';
-            // Force reflow before adding opacity
-            slide.offsetHeight;
-            slide.classList.add('active');
-        } else {
-            slide.classList.remove('active');
-            // Hide after transition
-            setTimeout(() => {
-                if (!slide.classList.contains('active')) {
-                    slide.style.display = 'none';
-                }
-            }, 500);
-        }
+        slide.classList.toggle('active', i === index);
     });
-    
     dots.forEach((dot, i) => {
         dot.classList.toggle('active', i === index);
     });

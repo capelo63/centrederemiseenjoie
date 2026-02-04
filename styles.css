@@ -1655,23 +1655,49 @@ footer {
 }
 
 @media (max-width: 768px) {
+
+    /* Désactivation globale des backdrop-filter sur mobile (cause de scintillement) */
+    *,
+    *::before,
+    *::after {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+
+    /* Remplacer les fonds semi-transparents par des fonds opaques */
+    header {
+        background: linear-gradient(135deg, #1F5733, #153B23);
+    }
+
+    .hebergement-item-video video {
+        display: none;
+    }
+
+    .hebergement-item-video::after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1F5733, #2a7a47);
+    }
+
     .logo {
         gap: 0.7rem;
     }
-    
+
     .logo-image {
         height: 80px;
         max-width: none;
     }
-    
+
     .logo h1 {
         font-size: 1.3rem;
     }
-    
+
     .menu-toggle {
         display: flex;
     }
-    
+
     .nav-links {
         position: fixed;
         top: 0;

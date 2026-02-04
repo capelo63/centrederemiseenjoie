@@ -188,130 +188,26 @@
 
             <div class="activites-proposees">
                 <h4>Nos activités</h4>
-                <div class="activites-grid">
-                    <div class="activite-item">
-                        <span class="activite-icon">🧘</span>
-                        <span>Méditations actives et guidées, en groupe ou individuelle</span>
-                    </div>
-                    <div class="activite-item">
-                        <span class="activite-icon">🕉️</span>
-                        <span>Yoga postural et respiration</span>
-                    </div>
-                    <div class="activite-item">
-                        <span class="activite-icon">🦶</span>
-                        <span>Réflexologie plantaire</span>
-                    </div>
-                    <div class="activite-item">
-                        <span class="activite-icon">✋</span>
-                        <span>Soins énergétiques Reiki</span>
-                    </div>
-                    <div class="activite-item">
-                        <span class="activite-icon">🙏</span>
-                        <span>Cérémonies traditionnelles hindouistes</span>
-                    </div>
-                    <div class="activite-item">
-                        <span class="activite-icon">🔔</span>
-                        <span>Relaxation sonore</span>
-                    </div>
+                <div class="activites-grid" id="activitesGrid">
+                    <!-- Chargé dynamiquement depuis Supabase -->
                 </div>
             </div>
 
             <div class="programme-events">
                 <h4>Événements à venir</h4>
-                <div class="events-grid">
-                    <div class="event-card">
-                        <div class="event-date">
-                            <span class="event-day">5-6</span>
-                            <span class="event-month">Avril</span>
-                        </div>
-                        <div class="event-details">
-                            <h5>Constellation Familiale en groupe & Yoga Nidra</h5>
-                            <p class="event-host">Avec <strong>Padma Priya</strong></p>
-                            <p class="event-desc">Un week-end pour libérer les mémoires familiales et se déposer dans une relaxation profonde.</p>
-                            <a href="#reservation" class="event-reserve">Réserver</a>
-                        </div>
-                    </div>
-
-                    <div class="event-card">
-                        <div class="event-date">
-                            <span class="event-day">11</span>
-                            <span class="event-month">Avril</span>
-                        </div>
-                        <div class="event-details">
-                            <h5>Méditation sonore</h5>
-                            <p class="event-time">Vendredi de 18h à 20h</p>
-                            <p class="event-host">Avec <strong>Aurélia – Méjisound</strong></p>
-                            <a href="#reservation" class="event-reserve">Réserver</a>
-                        </div>
-                    </div>
-
-                    <div class="event-card">
-                        <div class="event-date">
-                            <span class="event-day">12</span>
-                            <span class="event-month">Avril</span>
-                        </div>
-                        <div class="event-details">
-                            <h5>Méditation sonore & tirage d'oracles</h5>
-                            <p class="event-time">Samedi de 10h à 13h</p>
-                            <p class="event-host">Avec <strong>Aurélia – Méjisound</strong></p>
-                            <p class="event-desc">Un moment de guidance, de vibration et de clarté intérieure.</p>
-                            <a href="#reservation" class="event-reserve">Réserver</a>
-                        </div>
-                    </div>
-
-                    <div class="event-card">
-                        <div class="event-date">
-                            <span class="event-day">6</span>
-                            <span class="event-month">Juin</span>
-                        </div>
-                        <div class="event-details">
-                            <h5>Méditation sonore</h5>
-                            <p class="event-time">Samedi de 18h à 20h</p>
-                            <p class="event-host">Avec <strong>Aurélia – Méjisound</strong></p>
-                            <a href="#reservation" class="event-reserve">Réserver</a>
-                        </div>
-                    </div>
-
-                    <div class="event-card">
-                        <div class="event-date">
-                            <span class="event-day">7</span>
-                            <span class="event-month">Juin</span>
-                        </div>
-                        <div class="event-details">
-                            <h5>Méditation sonore & tirage d'oracles</h5>
-                            <p class="event-time">Dimanche de 10h à 13h</p>
-                            <p class="event-host">Avec <strong>Aurélia – Méjisound</strong></p>
-                            <a href="#reservation" class="event-reserve">Réserver</a>
-                        </div>
-                    </div>
-
-                    <div class="event-card">
-                        <div class="event-date">
-                            <span class="event-day">21</span>
-                            <span class="event-month">Juin</span>
-                        </div>
-                        <div class="event-details">
-                            <h5>Journée internationale du Yoga</h5>
-                            <p class="event-desc">Une journée dédiée à la célébration du yoga et de l'union du corps et de l'esprit.</p>
-                            <a href="#reservation" class="event-reserve">Réserver</a>
-                        </div>
-                    </div>
-
-                    <div class="event-card">
-                        <div class="event-date">
-                            <span class="event-day">27-28</span>
-                            <span class="event-month">Juin</span>
-                        </div>
-                        <div class="event-details">
-                            <h5>Week-end plantes comestibles et médicinales</h5>
-                            <p class="event-host">Avec <strong>Guy Lalière</strong></p>
-                            <p class="event-desc">Découverte, reconnaissance et usages des plantes au fil des saisons.</p>
-                            <a href="#reservation" class="event-reserve">Réserver</a>
-                        </div>
-                    </div>
+                <div class="events-grid" id="eventsGrid">
+                    <!-- Chargé dynamiquement depuis Supabase -->
                 </div>
             </div>
         </section>
+
+        <!-- Modale détail programme -->
+        <div id="programmeModal" class="programme-modal" style="display:none;">
+            <div class="programme-modal-content">
+                <button class="programme-modal-close" onclick="closeProgrammeModal()">&times;</button>
+                <div id="programmeModalBody"></div>
+            </div>
+        </div>
 
         <!-- Section Hôtes -->
         <section id="hotes" class="hosts-section">

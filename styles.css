@@ -79,12 +79,12 @@ body {
 }
 
 @media (max-width: 768px) {
+    .video-background {
+        display: none;
+    }
+
     .video-control {
-        width: 45px;
-        height: 45px;
-        font-size: 1rem;
-        bottom: 15px;
-        right: 15px;
+        display: none;
     }
 }
 
@@ -2342,9 +2342,15 @@ footer {
 
     .event-card:hover,
     .activite-item:hover,
-    .pratique-card:hover {
+    .pratique-card:hover,
+    .hebergement-item:hover {
         transform: none;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .hebergement-item:hover .hebergement-item-image img,
+    .hebergement-item:hover .hebergement-item-video video {
+        transform: none;
     }
 
     .pratique-card {

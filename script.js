@@ -34,10 +34,15 @@ function currentSlide(index) {
     showSlide(currentSlideIndex);
 }
 
-// Auto-advance slideshow every 5 seconds
-setInterval(() => {
-    changeSlide(1);
-}, 5000);
+// Auto-advance slideshow every 5 seconds (desktop only)
+const isMobile = window.matchMedia('(max-width: 768px)').matches;
+let slideshowInterval = null;
+
+if (!isMobile) {
+    slideshowInterval = setInterval(() => {
+        changeSlide(1);
+    }, 5000);
+}
 
 
 // Initialize on page load

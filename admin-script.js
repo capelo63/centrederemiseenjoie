@@ -5,6 +5,8 @@ let newsData = [];
 let reservationsData = [];
 let contactsData = [];
 let temoignagesData = [];
+let activitesData = [];
+let evenementsData = [];
 
 // Initialize admin panel
 document.addEventListener('DOMContentLoaded', function() {
@@ -28,6 +30,16 @@ function setupEventListeners() {
     // Set today's date as default for news
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('newsDate').value = today;
+
+    // Programme forms
+    document.getElementById('activiteForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        handleActiviteSave();
+    });
+    document.getElementById('evenementForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        handleEvenementSave();
+    });
 }
 
 // === AUTHENTICATION via Supabase REST ===
@@ -98,6 +110,7 @@ function showAdminPanel() {
     loadNewsData();
     loadSampleData();
     loadTemoignagesData();
+    loadProgrammeAdminData();
     loadAvailabilitySection();
     loadFacebookSettings();
 }
@@ -1107,4 +1120,265 @@ function saveFacebookConfig(config) {
         enabled: config.enabled || false
     };
     localStorage.setItem('facebookConfig', JSON.stringify(facebookConfig));
+}
+
+// === PROGRAMME MANAGEMENT ===
+
+function showProgrammeSubTab(tab) {
+    const actBtn = document.getElementById('progTabActivites');
+    const evtBtn = document.getElementById('progTabEvenements');
+    const actPanel = document.getElementById('progActivitesPanel');
+    const evtPanel = document.getElementById('progEvenementsPanel');
+
+    if (tab === 'activites') {
+        actBtn.className = 'btn-primary'; actBtn.style.opacity = '1';
+        evtBtn.className = 'btn-secondary'; evtBtn.style.opacity = '0.6';
+        actPanel.style.display = 'block';
+        evtPanel.style.display = 'none';
+    } else {
+        evtBtn.className = 'btn-primary'; evtBtn.style.opacity = '1';
+        actBtn.className = 'btn-secondary'; actBtn.style.opacity = '0.6';
+        evtPanel.style.display = 'block';
+        actPanel.style.display = 'none';
+    }
+}
+
+async function loadProgrammeAdminData() {
+    await Promise.all([loadActivitesData(), loadEvenementsData()]);
+}
+
+// --- Activités CRUD ---
+
+async function loadActivitesData() {
+    const tbody = document.getElementById('activitesTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="5">Chargement...</td></tr>';
+
+    try {
+        const data = await supabaseRest.select('programme_activites', 'select=*&order=ordre.asc,created_at.desc', accessToken);
+        activitesData = data || [];
+    } catch (error) {
+        console.error('Erreur chargement activités:', error.message);
+        tbody.innerHTML = '<tr><td colspan="5">Erreur de chargement</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = '';
+    activitesData.forEach(a => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${a.ordre || 0}</td>
+            <td style="font-size:1.5em;">${a.icone || ''}</td>
+            <td><strong>${a.titre}</strong></td>
+            <td><span class="status-badge status-${a.status}">${a.status === 'published' ? 'Publié' : 'Brouillon'}</span></td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn-primary btn-sm" onclick="editActivite(${a.id})">Modifier</button>
+                    <button class="btn-sm" onclick="toggleActiviteStatus(${a.id})">${a.status === 'published' ? 'Masquer' : 'Publier'}</button>
+                    <button class="btn-danger btn-sm" onclick="deleteActivite(${a.id})">Supprimer</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function showActiviteForm(id) {
+    document.getElementById('activiteFormPanel').style.display = 'block';
+    document.getElementById('activiteFormTitle').textContent = id ? 'Modifier l\'activité' : 'Nouvelle activité';
+    if (!id) {
+        document.getElementById('activiteId').value = '';
+        document.getElementById('activiteIcone').value = '';
+        document.getElementById('activiteTitre').value = '';
+        document.getElementById('activiteDescription').value = '';
+        document.getElementById('activiteImage').value = '';
+        document.getElementById('activiteOrdre').value = activitesData.length;
+    }
+}
+
+function hideActiviteForm() {
+    document.getElementById('activiteFormPanel').style.display = 'none';
+}
+
+function editActivite(id) {
+    const a = activitesData.find(x => x.id === id);
+    if (!a) return;
+    document.getElementById('activiteId').value = a.id;
+    document.getElementById('activiteIcone').value = a.icone || '';
+    document.getElementById('activiteTitre').value = a.titre;
+    document.getElementById('activiteDescription').value = a.description || '';
+    document.getElementById('activiteImage').value = a.image_url || '';
+    document.getElementById('activiteOrdre').value = a.ordre || 0;
+    showActiviteForm(id);
+}
+
+async function handleActiviteSave() {
+    const id = document.getElementById('activiteId').value;
+    const item = {
+        icone: document.getElementById('activiteIcone').value || null,
+        titre: document.getElementById('activiteTitre').value,
+        description: document.getElementById('activiteDescription').value || null,
+        image_url: document.getElementById('activiteImage').value || null,
+        ordre: parseInt(document.getElementById('activiteOrdre').value) || 0,
+        status: 'published'
+    };
+
+    try {
+        if (id) {
+            await supabaseRest.update('programme_activites', item, `id=eq.${id}`, accessToken);
+        } else {
+            await supabaseRest.insert('programme_activites', item, accessToken);
+        }
+        hideActiviteForm();
+        await loadActivitesData();
+        showSuccessMessage('Activité enregistrée !');
+    } catch (error) {
+        alert('Erreur : ' + error.message);
+    }
+}
+
+async function toggleActiviteStatus(id) {
+    const a = activitesData.find(x => x.id === id);
+    if (!a) return;
+    const newStatus = a.status === 'published' ? 'draft' : 'published';
+    try {
+        await supabaseRest.update('programme_activites', { status: newStatus }, `id=eq.${id}`, accessToken);
+        await loadActivitesData();
+    } catch (error) {
+        alert('Erreur : ' + error.message);
+    }
+}
+
+async function deleteActivite(id) {
+    if (!confirm('Supprimer cette activité ?')) return;
+    try {
+        await supabaseRest.remove('programme_activites', `id=eq.${id}`, accessToken);
+        await loadActivitesData();
+        showSuccessMessage('Activité supprimée !');
+    } catch (error) {
+        alert('Erreur : ' + error.message);
+    }
+}
+
+// --- Événements CRUD ---
+
+async function loadEvenementsData() {
+    const tbody = document.getElementById('evenementsTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="5">Chargement...</td></tr>';
+
+    try {
+        const data = await supabaseRest.select('programme_evenements', 'select=*&order=date_debut.asc', accessToken);
+        evenementsData = data || [];
+    } catch (error) {
+        console.error('Erreur chargement événements:', error.message);
+        tbody.innerHTML = '<tr><td colspan="5">Erreur de chargement</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = '';
+    evenementsData.forEach(e => {
+        const dateStr = new Date(e.date_debut + 'T00:00:00').toLocaleDateString('fr-FR');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${dateStr}${e.date_fin && e.date_fin !== e.date_debut ? ' - ' + new Date(e.date_fin + 'T00:00:00').toLocaleDateString('fr-FR') : ''}</td>
+            <td><strong>${e.titre}</strong></td>
+            <td>${e.intervenant || '-'}</td>
+            <td><span class="status-badge status-${e.status}">${e.status === 'published' ? 'Publié' : 'Brouillon'}</span></td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn-primary btn-sm" onclick="editEvenement(${e.id})">Modifier</button>
+                    <button class="btn-sm" onclick="toggleEvenementStatus(${e.id})">${e.status === 'published' ? 'Masquer' : 'Publier'}</button>
+                    <button class="btn-danger btn-sm" onclick="deleteEvenement(${e.id})">Supprimer</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function showEvenementForm(id) {
+    document.getElementById('evenementFormPanel').style.display = 'block';
+    document.getElementById('evenementFormTitle').textContent = id ? 'Modifier l\'événement' : 'Nouvel événement';
+    if (!id) {
+        document.getElementById('evenementId').value = '';
+        document.getElementById('evenementTitre').value = '';
+        document.getElementById('evenementDateDebut').value = '';
+        document.getElementById('evenementDateFin').value = '';
+        document.getElementById('evenementHoraires').value = '';
+        document.getElementById('evenementIntervenant').value = '';
+        document.getElementById('evenementResume').value = '';
+        document.getElementById('evenementDescription').value = '';
+        document.getElementById('evenementImage').value = '';
+    }
+}
+
+function hideEvenementForm() {
+    document.getElementById('evenementFormPanel').style.display = 'none';
+}
+
+function editEvenement(id) {
+    const e = evenementsData.find(x => x.id === id);
+    if (!e) return;
+    document.getElementById('evenementId').value = e.id;
+    document.getElementById('evenementTitre').value = e.titre;
+    document.getElementById('evenementDateDebut').value = e.date_debut || '';
+    document.getElementById('evenementDateFin').value = e.date_fin || '';
+    document.getElementById('evenementHoraires').value = e.horaires || '';
+    document.getElementById('evenementIntervenant').value = e.intervenant || '';
+    document.getElementById('evenementResume').value = e.resume || '';
+    document.getElementById('evenementDescription').value = e.description || '';
+    document.getElementById('evenementImage').value = e.image_url || '';
+    showEvenementForm(id);
+}
+
+async function handleEvenementSave() {
+    const id = document.getElementById('evenementId').value;
+    const item = {
+        titre: document.getElementById('evenementTitre').value,
+        date_debut: document.getElementById('evenementDateDebut').value,
+        date_fin: document.getElementById('evenementDateFin').value || null,
+        horaires: document.getElementById('evenementHoraires').value || null,
+        intervenant: document.getElementById('evenementIntervenant').value || null,
+        resume: document.getElementById('evenementResume').value || null,
+        description: document.getElementById('evenementDescription').value || null,
+        image_url: document.getElementById('evenementImage').value || null,
+        status: 'published'
+    };
+
+    try {
+        if (id) {
+            await supabaseRest.update('programme_evenements', item, `id=eq.${id}`, accessToken);
+        } else {
+            await supabaseRest.insert('programme_evenements', item, accessToken);
+        }
+        hideEvenementForm();
+        await loadEvenementsData();
+        showSuccessMessage('Événement enregistré !');
+    } catch (error) {
+        alert('Erreur : ' + error.message);
+    }
+}
+
+async function toggleEvenementStatus(id) {
+    const e = evenementsData.find(x => x.id === id);
+    if (!e) return;
+    const newStatus = e.status === 'published' ? 'draft' : 'published';
+    try {
+        await supabaseRest.update('programme_evenements', { status: newStatus }, `id=eq.${id}`, accessToken);
+        await loadEvenementsData();
+    } catch (error) {
+        alert('Erreur : ' + error.message);
+    }
+}
+
+async function deleteEvenement(id) {
+    if (!confirm('Supprimer cet événement ?')) return;
+    try {
+        await supabaseRest.remove('programme_evenements', `id=eq.${id}`, accessToken);
+        await loadEvenementsData();
+        showSuccessMessage('Événement supprimé !');
+    } catch (error) {
+        alert('Erreur : ' + error.message);
+    }
 }

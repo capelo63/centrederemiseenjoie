@@ -39,6 +39,7 @@
             <button class="nav-btn active" onclick="showSection('actualites')">Actualités</button>
             <button class="nav-btn" onclick="showSection('reservations')">Réservations</button>
             <button class="nav-btn" onclick="showSection('disponibilites')">Disponibilités</button>
+            <button class="nav-btn" onclick="showSection('programme')">Programme</button>
             <button class="nav-btn" onclick="showSection('temoignages')">Témoignages</button>
             <button class="nav-btn" onclick="showSection('contacts')">Messages</button>
             <button class="nav-btn" onclick="showSection('parametres')">Paramètres</button>
@@ -189,6 +190,139 @@
                     <div class="accommodation-grid" id="accommodationStatusGrid">
                         <!-- Chargé dynamiquement -->
                     </div>
+                </div>
+            </section>
+
+            <!-- Section Programme -->
+            <section id="programme-section" class="admin-section">
+                <div class="section-header">
+                    <h2>Gestion du Programme</h2>
+                </div>
+
+                <!-- Sous-onglets Activités / Événements -->
+                <div style="display:flex;gap:10px;margin-bottom:20px;">
+                    <button class="btn-primary" id="progTabActivites" onclick="showProgrammeSubTab('activites')" style="opacity:1;">Activités</button>
+                    <button class="btn-secondary" id="progTabEvenements" onclick="showProgrammeSubTab('evenements')" style="opacity:0.6;">Événements</button>
+                </div>
+
+                <!-- Sous-section Activités -->
+                <div id="progActivitesPanel">
+                    <div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
+                        <button class="btn-primary" onclick="showActiviteForm()">Ajouter une activité</button>
+                    </div>
+
+                    <div id="activiteFormPanel" style="display:none;" class="news-form">
+                        <h3 id="activiteFormTitle">Nouvelle activité</h3>
+                        <form id="activiteForm">
+                            <input type="hidden" id="activiteId">
+                            <div class="form-group">
+                                <label for="activiteIcone">Icône (emoji) :</label>
+                                <input type="text" id="activiteIcone" placeholder="Ex : 🧘" style="max-width:80px;">
+                            </div>
+                            <div class="form-group">
+                                <label for="activiteTitre">Titre :</label>
+                                <input type="text" id="activiteTitre" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="activiteDescription">Description détaillée :</label>
+                                <textarea id="activiteDescription" rows="5"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="activiteImage">URL de l'image :</label>
+                                <input type="url" id="activiteImage" placeholder="https://...">
+                            </div>
+                            <div class="form-group">
+                                <label for="activiteOrdre">Ordre d'affichage :</label>
+                                <input type="number" id="activiteOrdre" value="0" min="0" style="max-width:80px;">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">Enregistrer</button>
+                                <button type="button" class="btn-secondary" onclick="hideActiviteForm()">Annuler</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Ordre</th>
+                                <th>Icône</th>
+                                <th>Titre</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activitesTableBody">
+                            <!-- Chargé dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Sous-section Événements -->
+                <div id="progEvenementsPanel" style="display:none;">
+                    <div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
+                        <button class="btn-primary" onclick="showEvenementForm()">Ajouter un événement</button>
+                    </div>
+
+                    <div id="evenementFormPanel" style="display:none;" class="news-form">
+                        <h3 id="evenementFormTitle">Nouvel événement</h3>
+                        <form id="evenementForm">
+                            <input type="hidden" id="evenementId">
+                            <div class="form-group">
+                                <label for="evenementTitre">Titre :</label>
+                                <input type="text" id="evenementTitre" required>
+                            </div>
+                            <div class="form-group" style="display:flex;gap:15px;">
+                                <div style="flex:1;">
+                                    <label for="evenementDateDebut">Date début :</label>
+                                    <input type="date" id="evenementDateDebut" required>
+                                </div>
+                                <div style="flex:1;">
+                                    <label for="evenementDateFin">Date fin :</label>
+                                    <input type="date" id="evenementDateFin">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="evenementHoraires">Horaires :</label>
+                                <input type="text" id="evenementHoraires" placeholder="Ex : Samedi de 10h à 13h">
+                            </div>
+                            <div class="form-group">
+                                <label for="evenementIntervenant">Intervenant :</label>
+                                <input type="text" id="evenementIntervenant" placeholder="Ex : Aurélia – Méjisound">
+                            </div>
+                            <div class="form-group">
+                                <label for="evenementResume">Résumé (affiché dans la liste) :</label>
+                                <input type="text" id="evenementResume" placeholder="Courte description">
+                            </div>
+                            <div class="form-group">
+                                <label for="evenementDescription">Description complète (affichée au clic) :</label>
+                                <textarea id="evenementDescription" rows="5"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="evenementImage">URL de l'image :</label>
+                                <input type="url" id="evenementImage" placeholder="https://...">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">Enregistrer</button>
+                                <button type="button" class="btn-secondary" onclick="hideEvenementForm()">Annuler</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Titre</th>
+                                <th>Intervenant</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="evenementsTableBody">
+                            <!-- Chargé dynamiquement -->
+                        </tbody>
+                    </table>
                 </div>
             </section>
 

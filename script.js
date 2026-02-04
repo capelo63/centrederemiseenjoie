@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupVideoBackground();
     setupMobileMenu();
     loadTestimonials();
+    loadProgrammeData();
     initializeCalendar();
     initializeAvailabilitySystem();
 });
@@ -955,7 +956,132 @@ function clearAccommodationSelection() {
     if (hebergementGrid) {
         hebergementGrid.innerHTML = '';
     }
-    
+
     // Supprimer les champs cachés d'hébergement
     document.querySelectorAll('input[name="hebergementType"]').forEach(input => input.remove());
+}
+
+// === PROGRAMME : Chargement dynamique ===
+
+let programmeActivites = [];
+let programmeEvenements = [];
+
+async function loadProgrammeData() {
+    try {
+        const [activites, evenements] = await Promise.all([
+            supabaseRest.select('programme_activites', 'select=*&status=eq.published&order=ordre.asc'),
+            supabaseRest.select('programme_evenements', 'select=*&status=eq.published&order=date_debut.asc')
+        ]);
+        programmeActivites = activites || [];
+        programmeEvenements = evenements || [];
+    } catch (e) {
+        console.error('Erreur chargement programme:', e.message);
+    }
+    renderActivites();
+    renderEvenements();
+}
+
+function renderActivites() {
+    const grid = document.getElementById('activitesGrid');
+    if (!grid) return;
+
+    if (programmeActivites.length === 0) {
+        grid.innerHTML = '<p style="text-align:center;color:#888;">Aucune activité pour le moment.</p>';
+        return;
+    }
+
+    grid.innerHTML = programmeActivites.map(a => `
+        <div class="activite-item activite-clickable" onclick="openProgrammeDetail('activite', ${a.id})">
+            <span class="activite-icon">${a.icone || ''}</span>
+            <span>${a.titre}</span>
+        </div>
+    `).join('');
+}
+
+function renderEvenements() {
+    const grid = document.getElementById('eventsGrid');
+    if (!grid) return;
+
+    // Filtrer pour ne garder que les événements futurs ou du jour
+    const today = new Date().toISOString().split('T')[0];
+    const futurs = programmeEvenements.filter(e => e.date_debut >= today);
+
+    if (futurs.length === 0) {
+        grid.innerHTML = '<p style="text-align:center;color:#888;">Aucun événement à venir pour le moment.</p>';
+        return;
+    }
+
+    grid.innerHTML = futurs.map(e => {
+        const d = new Date(e.date_debut + 'T00:00:00');
+        const mois = d.toLocaleDateString('fr-FR', { month: 'long' });
+        const moisCap = mois.charAt(0).toUpperCase() + mois.slice(1);
+        let jourLabel = d.getDate().toString();
+        if (e.date_fin && e.date_fin !== e.date_debut) {
+            const df = new Date(e.date_fin + 'T00:00:00');
+            jourLabel = d.getDate() + '-' + df.getDate();
+        }
+
+        return `
+        <div class="event-card event-clickable" onclick="openProgrammeDetail('evenement', ${e.id})">
+            <div class="event-date">
+                <span class="event-day">${jourLabel}</span>
+                <span class="event-month">${moisCap}</span>
+            </div>
+            <div class="event-details">
+                <h5>${e.titre}</h5>
+                ${e.horaires ? `<p class="event-time">${e.horaires}</p>` : ''}
+                ${e.intervenant ? `<p class="event-host">Avec <strong>${e.intervenant}</strong></p>` : ''}
+                ${e.resume ? `<p class="event-desc">${e.resume}</p>` : ''}
+                <a href="#reservation" class="event-reserve" onclick="event.stopPropagation()">Réserver</a>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function openProgrammeDetail(type, id) {
+    let item;
+    if (type === 'activite') {
+        item = programmeActivites.find(a => a.id === id);
+    } else {
+        item = programmeEvenements.find(e => e.id === id);
+    }
+    if (!item) return;
+
+    const modal = document.getElementById('programmeModal');
+    const body = document.getElementById('programmeModalBody');
+
+    let html = '';
+    if (type === 'activite') {
+        html = `
+            <div class="programme-detail">
+                ${item.image_url ? `<img src="${item.image_url}" alt="${item.titre}" class="programme-detail-img">` : ''}
+                <h3>${item.icone || ''} ${item.titre}</h3>
+                <div class="programme-detail-text">${item.description || ''}</div>
+            </div>`;
+    } else {
+        const d = new Date(item.date_debut + 'T00:00:00');
+        let dateStr = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        if (item.date_fin && item.date_fin !== item.date_debut) {
+            const df = new Date(item.date_fin + 'T00:00:00');
+            dateStr = d.toLocaleDateString('fr-FR', { day: 'numeric' }) + ' - ' + df.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        }
+        html = `
+            <div class="programme-detail">
+                ${item.image_url ? `<img src="${item.image_url}" alt="${item.titre}" class="programme-detail-img">` : ''}
+                <h3>${item.titre}</h3>
+                <p class="programme-detail-date">${dateStr}</p>
+                ${item.horaires ? `<p class="programme-detail-time">${item.horaires}</p>` : ''}
+                ${item.intervenant ? `<p class="programme-detail-host">Avec <strong>${item.intervenant}</strong></p>` : ''}
+                <div class="programme-detail-text">${item.description || ''}</div>
+                <a href="#reservation" class="event-reserve" onclick="closeProgrammeModal()" style="display:inline-block;margin-top:20px;">Réserver</a>
+            </div>`;
+    }
+
+    body.innerHTML = html;
+    modal.style.display = 'flex';
+    modal.onclick = function(ev) { if (ev.target === modal) closeProgrammeModal(); };
+}
+
+function closeProgrammeModal() {
+    document.getElementById('programmeModal').style.display = 'none';
 }

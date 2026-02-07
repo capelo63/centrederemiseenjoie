@@ -1715,7 +1715,7 @@ footer {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 0;
+        gap: 0.8rem;
         transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         padding: 2rem;
         border-radius: 0;
@@ -1726,24 +1726,27 @@ footer {
         right: 0;
     }
 
-    .nav-links a {
-        font-size: 1.3rem;
-        padding: 1rem 2rem;
-        text-align: center;
+    .nav-links li {
         width: 70%;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.08);
-        border: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        margin: 0;
+        min-width: 70%;
+        max-width: 70%;
+        flex-shrink: 0;
     }
 
-    .nav-links li:last-child a {
-        border-bottom: none;
+    .nav-links a {
+        font-size: 1.2rem;
+        padding: 0.9rem 1.5rem;
+        text-align: center;
+        width: 100%;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        margin: 0;
+        display: block;
     }
 
     .nav-links a:hover {
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.2);
         transform: none;
         box-shadow: none;
     }

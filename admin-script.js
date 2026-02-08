@@ -8,11 +8,64 @@ let temoignagesData = [];
 let activitesData = [];
 let evenementsData = [];
 
+// Quill editors
+let quillActiviteDescription = null;
+let quillEvenementDescription = null;
+let quillPratiqueResume = null;
+let quillPratiqueDescription = null;
+
+// Quill toolbar configuration
+const quillToolbarOptions = [
+    ['bold', 'italic', 'underline'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    ['clean']
+];
+
 // Initialize admin panel
 document.addEventListener('DOMContentLoaded', function() {
     checkAuthStatus();
     setupEventListeners();
+    initQuillEditors();
 });
+
+// Initialize Quill rich text editors
+function initQuillEditors() {
+    // Activité description editor
+    if (document.getElementById('activiteDescriptionEditor')) {
+        quillActiviteDescription = new Quill('#activiteDescriptionEditor', {
+            theme: 'snow',
+            modules: { toolbar: quillToolbarOptions },
+            placeholder: 'Description détaillée de l\'activité...'
+        });
+    }
+
+    // Événement description editor
+    if (document.getElementById('evenementDescriptionEditor')) {
+        quillEvenementDescription = new Quill('#evenementDescriptionEditor', {
+            theme: 'snow',
+            modules: { toolbar: quillToolbarOptions },
+            placeholder: 'Description complète de l\'événement...'
+        });
+    }
+
+    // Pratique résumé editor
+    if (document.getElementById('pratiqueResumeEditor')) {
+        quillPratiqueResume = new Quill('#pratiqueResumeEditor', {
+            theme: 'snow',
+            modules: { toolbar: quillToolbarOptions },
+            placeholder: 'Résumé affiché dans la carte...'
+        });
+    }
+
+    // Pratique description editor
+    if (document.getElementById('pratiqueDescriptionEditor')) {
+        quillPratiqueDescription = new Quill('#pratiqueDescriptionEditor', {
+            theme: 'snow',
+            modules: { toolbar: quillToolbarOptions },
+            placeholder: 'Description complète du lieu de pratique...'
+        });
+    }
+}
 
 function setupEventListeners() {
     // Login form
@@ -1190,7 +1243,7 @@ function showActiviteForm(id) {
         document.getElementById('activiteId').value = '';
         document.getElementById('activiteIcone').value = '';
         document.getElementById('activiteTitre').value = '';
-        document.getElementById('activiteDescription').value = '';
+        if (quillActiviteDescription) quillActiviteDescription.root.innerHTML = '';
         document.getElementById('activiteImage').value = '';
         document.getElementById('activiteOrdre').value = activitesData.length;
     }
@@ -1206,7 +1259,7 @@ function editActivite(id) {
     document.getElementById('activiteId').value = a.id;
     document.getElementById('activiteIcone').value = a.icone || '';
     document.getElementById('activiteTitre').value = a.titre;
-    document.getElementById('activiteDescription').value = a.description || '';
+    if (quillActiviteDescription) quillActiviteDescription.root.innerHTML = a.description || '';
     document.getElementById('activiteImage').value = a.image_url || '';
     document.getElementById('activiteOrdre').value = a.ordre || 0;
     showActiviteForm(id);
@@ -1214,10 +1267,11 @@ function editActivite(id) {
 
 async function handleActiviteSave() {
     const id = document.getElementById('activiteId').value;
+    const descriptionHtml = quillActiviteDescription ? quillActiviteDescription.root.innerHTML : '';
     const item = {
         icone: document.getElementById('activiteIcone').value || null,
         titre: document.getElementById('activiteTitre').value,
-        description: document.getElementById('activiteDescription').value || null,
+        description: (descriptionHtml && descriptionHtml !== '<p><br></p>') ? descriptionHtml : null,
         image_url: document.getElementById('activiteImage').value || null,
         ordre: parseInt(document.getElementById('activiteOrdre').value) || 0,
         status: 'published'
@@ -1308,7 +1362,7 @@ function showEvenementForm(id) {
         document.getElementById('evenementHoraires').value = '';
         document.getElementById('evenementIntervenant').value = '';
         document.getElementById('evenementResume').value = '';
-        document.getElementById('evenementDescription').value = '';
+        if (quillEvenementDescription) quillEvenementDescription.root.innerHTML = '';
         document.getElementById('evenementImage').value = '';
         document.getElementById('evenementImageFile').value = '';
         document.getElementById('evenementImagePreview').style.display = 'none';
@@ -1329,7 +1383,7 @@ function editEvenement(id) {
     document.getElementById('evenementHoraires').value = e.horaires || '';
     document.getElementById('evenementIntervenant').value = e.intervenant || '';
     document.getElementById('evenementResume').value = e.resume || '';
-    document.getElementById('evenementDescription').value = e.description || '';
+    if (quillEvenementDescription) quillEvenementDescription.root.innerHTML = e.description || '';
     document.getElementById('evenementImage').value = e.image_url || '';
     document.getElementById('evenementImageFile').value = '';
     if (e.image_url) {
@@ -1384,6 +1438,7 @@ function clearEvenementImage() {
 
 async function handleEvenementSave() {
     const id = document.getElementById('evenementId').value;
+    const descriptionHtml = quillEvenementDescription ? quillEvenementDescription.root.innerHTML : '';
     const item = {
         titre: document.getElementById('evenementTitre').value,
         date_debut: document.getElementById('evenementDateDebut').value,
@@ -1391,7 +1446,7 @@ async function handleEvenementSave() {
         horaires: document.getElementById('evenementHoraires').value || null,
         intervenant: document.getElementById('evenementIntervenant').value || null,
         resume: document.getElementById('evenementResume').value || null,
-        description: document.getElementById('evenementDescription').value || null,
+        description: (descriptionHtml && descriptionHtml !== '<p><br></p>') ? descriptionHtml : null,
         image_url: document.getElementById('evenementImage').value || null,
         status: 'published'
     };
@@ -1478,8 +1533,8 @@ function showPratiqueForm(id) {
     if (!id) {
         document.getElementById('pratiqueId').value = '';
         document.getElementById('pratiqueTitre').value = '';
-        document.getElementById('pratiqueResume').value = '';
-        document.getElementById('pratiqueDescription').value = '';
+        if (quillPratiqueResume) quillPratiqueResume.root.innerHTML = '';
+        if (quillPratiqueDescription) quillPratiqueDescription.root.innerHTML = '';
         document.getElementById('pratiqueImage').value = '';
         document.getElementById('pratiqueImageFile').value = '';
         document.getElementById('pratiqueImagePreview').style.display = 'none';
@@ -1497,8 +1552,8 @@ function editPratique(id) {
     if (!p) return;
     document.getElementById('pratiqueId').value = p.id;
     document.getElementById('pratiqueTitre').value = p.titre;
-    document.getElementById('pratiqueResume').value = p.resume || '';
-    document.getElementById('pratiqueDescription').value = p.description || '';
+    if (quillPratiqueResume) quillPratiqueResume.root.innerHTML = p.resume || '';
+    if (quillPratiqueDescription) quillPratiqueDescription.root.innerHTML = p.description || '';
     document.getElementById('pratiqueImage').value = p.image_url || '';
     document.getElementById('pratiqueImageFile').value = '';
     document.getElementById('pratiqueVideo').value = p.video_url || '';
@@ -1529,10 +1584,12 @@ function clearPratiqueImage() {
 
 async function handlePratiqueSave() {
     const id = document.getElementById('pratiqueId').value;
+    const resumeHtml = quillPratiqueResume ? quillPratiqueResume.root.innerHTML : '';
+    const descriptionHtml = quillPratiqueDescription ? quillPratiqueDescription.root.innerHTML : '';
     const item = {
         titre: document.getElementById('pratiqueTitre').value,
-        resume: document.getElementById('pratiqueResume').value || null,
-        description: document.getElementById('pratiqueDescription').value || null,
+        resume: (resumeHtml && resumeHtml !== '<p><br></p>') ? resumeHtml : null,
+        description: (descriptionHtml && descriptionHtml !== '<p><br></p>') ? descriptionHtml : null,
         image_url: document.getElementById('pratiqueImage').value || null,
         video_url: document.getElementById('pratiqueVideo').value || null,
         ordre: parseInt(document.getElementById('pratiqueOrdre').value) || 0,

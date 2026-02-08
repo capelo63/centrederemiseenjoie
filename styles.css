@@ -2634,9 +2634,9 @@ footer {
     background: rgba(0,0,0,0.6);
     z-index: 9999;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 20px;
+    padding: 100px 20px 20px 20px;
 }
 
 .programme-modal-content {

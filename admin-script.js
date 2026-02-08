@@ -668,9 +668,9 @@ let adminCalendarDate = new Date();
 let confirmedReservations = [];
 
 const accommodationTypes = {
-    tipi: { name: 'Le Tipi', capacity: 4 },
+    tipi: { name: 'Le Tipi', capacity: 2 },
     caravane: { name: 'La Caravane', capacity: 2 },
-    dortoir: { name: 'Le Dortoir du Chalet', capacity: 8 }
+    dortoir: { name: 'Le Dortoir du Chalet', capacity: 5 }
 };
 
 async function loadAvailabilitySection() {
@@ -1245,6 +1245,8 @@ function showActiviteForm(id) {
         document.getElementById('activiteTitre').value = '';
         if (quillActiviteDescription) quillActiviteDescription.root.innerHTML = '';
         document.getElementById('activiteImage').value = '';
+        document.getElementById('activiteImageFile').value = '';
+        document.getElementById('activiteImagePreview').style.display = 'none';
         document.getElementById('activiteOrdre').value = activitesData.length;
     }
 }
@@ -1261,6 +1263,13 @@ function editActivite(id) {
     document.getElementById('activiteTitre').value = a.titre;
     if (quillActiviteDescription) quillActiviteDescription.root.innerHTML = a.description || '';
     document.getElementById('activiteImage').value = a.image_url || '';
+    document.getElementById('activiteImageFile').value = '';
+    if (a.image_url) {
+        document.getElementById('activiteImagePreviewImg').src = a.image_url;
+        document.getElementById('activiteImagePreview').style.display = 'block';
+    } else {
+        document.getElementById('activiteImagePreview').style.display = 'none';
+    }
     document.getElementById('activiteOrdre').value = a.ordre || 0;
     showActiviteForm(id);
 }
@@ -1434,6 +1443,21 @@ function clearEvenementImage() {
     document.getElementById('evenementImage').value = '';
     document.getElementById('evenementImageFile').value = '';
     document.getElementById('evenementImagePreview').style.display = 'none';
+}
+
+function previewActiviteImage(input) {
+    if (!input.files || !input.files[0]) return;
+    compressImage(input.files[0], 800, 0.8).then(dataUrl => {
+        document.getElementById('activiteImage').value = dataUrl;
+        document.getElementById('activiteImagePreviewImg').src = dataUrl;
+        document.getElementById('activiteImagePreview').style.display = 'block';
+    });
+}
+
+function clearActiviteImage() {
+    document.getElementById('activiteImage').value = '';
+    document.getElementById('activiteImageFile').value = '';
+    document.getElementById('activiteImagePreview').style.display = 'none';
 }
 
 async function handleEvenementSave() {

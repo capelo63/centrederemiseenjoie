@@ -232,8 +232,13 @@
                                 <input type="hidden" id="activiteDescription">
                             </div>
                             <div class="form-group">
-                                <label for="activiteImage">URL de l'image :</label>
-                                <input type="url" id="activiteImage" placeholder="https://...">
+                                <label for="activiteImageFile">Image :</label>
+                                <input type="file" id="activiteImageFile" accept="image/*" onchange="previewActiviteImage(this)">
+                                <div id="activiteImagePreview" style="margin-top:10px;display:none;">
+                                    <img id="activiteImagePreviewImg" src="" alt="Aperçu" style="max-width:300px;max-height:200px;border-radius:8px;object-fit:cover;">
+                                    <button type="button" onclick="clearActiviteImage()" style="display:block;margin-top:6px;background:none;border:none;color:#c00;cursor:pointer;font-size:0.9em;">Supprimer l'image</button>
+                                </div>
+                                <input type="hidden" id="activiteImage">
                             </div>
                             <div class="form-group">
                                 <label for="activiteOrdre">Ordre d'affichage :</label>

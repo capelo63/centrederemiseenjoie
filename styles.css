@@ -104,7 +104,7 @@ body {
 }
 
 header {
-    background: #526664;
+    background: #bf8b37;
     backdrop-filter: blur(15px);
     color: white;
     padding: 0.8rem 0;
@@ -163,7 +163,7 @@ nav {
     display: flex;
     list-style: none;
     gap: 0.5rem;
-    background: #c0a794;
+    background: #966a20;
     padding: 0.5rem;
     border-radius: 25px;
     backdrop-filter: blur(10px);
@@ -2225,7 +2225,7 @@ footer {
     display: flex;
     gap: 1.2rem;
     padding: 1.5rem;
-    background: #e4e4e5;
+    background: #ebe9dd;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(31, 87, 51, 0.1);
@@ -2336,7 +2336,7 @@ footer {
 .pratique-card {
     display: flex;
     gap: 1.5rem;
-    background: #e4e4e5;
+    background: #ebe9dd;
     border-radius: 14px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     border: 1px solid rgba(31,87,51,0.1);
@@ -2457,7 +2457,7 @@ footer {
 }
 
 .hebergement-item {
-    background: #e4e4e5;
+    background: #ebe9dd;
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
@@ -2577,7 +2577,7 @@ footer {
 .facebook-widget {
     display: flex;
     justify-content: center;
-    background: #e4e4e5;
+    background: #ebe9dd;
     border-radius: 12px;
     padding: 1rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -2640,7 +2640,7 @@ footer {
 }
 
 .programme-modal-content {
-    background: #e4e4e5;
+    background: #ebe9dd;
     border-radius: 16px;
     padding: 35px;
     max-width: 650px;

@@ -569,7 +569,7 @@ let accommodationData = {};
 const accommodationTypes = {
     tipi: {
         name: "Le Tipi",
-        capacity: 4,
+        capacity: 2,
         description: "Hébergement authentique en pleine nature, idéal pour une expérience unique.",
         baseAvailability: true
     },
@@ -581,7 +581,7 @@ const accommodationTypes = {
     },
     dortoir: {
         name: "Le Dortoir du Chalet",
-        capacity: 8,
+        capacity: 5,
         description: "Espace convivial et chaleureux parfait pour les groupes.",
         baseAvailability: true
     }

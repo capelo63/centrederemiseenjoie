@@ -1685,7 +1685,7 @@ footer {
 
     /* Remplacer les fonds semi-transparents par des fonds opaques */
     header {
-        background: linear-gradient(135deg, #1F5733, #153B23);
+        background: #bf8b37;
     }
 
     .logo {
@@ -1711,7 +1711,7 @@ footer {
         right: -100%;
         width: 100%;
         height: 100vh;
-        background: linear-gradient(135deg, #1F5733, #153B23);
+        background: #966a20;
         flex-direction: column;
         justify-content: center;
         align-items: center;

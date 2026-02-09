@@ -269,6 +269,23 @@ async function handleReservation() {
                 message: data.messageReservation || '—',
                 telephone: data.resaTelephone || '—'
             });
+
+            // Notification au propriétaire
+            await emailjs.send('service_zjkkwye', 'template_notification', {
+                to_email: 'centrederemiseenjoie@gmail.com',
+                type: 'Nouvelle réservation',
+                nom_prenom: data.resaNomPrenom,
+                email: data.resaEmail,
+                telephone: data.resaTelephone || '—',
+                type_reservation: typeLabels[typeReservation] || typeReservation,
+                date_arrivee: new Date(data.dateArrivee + 'T00:00:00').toLocaleDateString('fr-FR'),
+                date_depart: new Date(data.dateDepart + 'T00:00:00').toLocaleDateString('fr-FR'),
+                nombre_personnes: data.nombrePersonnes,
+                hebergement_type: data.hebergementType || '—',
+                activites: activites || '—',
+                repas: repas || '—',
+                message: data.messageReservation || '—'
+            });
         } catch (e) {
             console.error('Erreur envoi email confirmation:', e);
         }
@@ -315,6 +332,21 @@ async function handleContact() {
             console.error('Erreur envoi contact:', error);
             alert('Erreur lors de l\'envoi de votre message. Veuillez réessayer.');
             return;
+        }
+    }
+
+    // Notification au propriétaire
+    if (typeof emailjs !== 'undefined') {
+        try {
+            await emailjs.send('service_zjkkwye', 'template_notification', {
+                to_email: 'centrederemiseenjoie@gmail.com',
+                type: 'Nouveau message de contact',
+                nom_prenom: data.nomPrenom,
+                email: data.email,
+                message: data.message
+            });
+        } catch (e) {
+            console.error('Erreur envoi notification:', e);
         }
     }
 

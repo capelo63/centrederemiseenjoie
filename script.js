@@ -256,7 +256,7 @@ async function handleReservation() {
                 hebergement_activites: 'Hébergement + Activités',
                 entreprise: 'Animation entreprise'
             };
-            await emailjs.send('service_zjkkwye', 'template_t6h9q3c', {
+            const emailData = {
                 email: data.resaEmail,
                 nom_prenom: data.resaNomPrenom,
                 type_reservation: typeLabels[typeReservation] || typeReservation,
@@ -268,6 +268,15 @@ async function handleReservation() {
                 repas: repas || '—',
                 message: data.messageReservation || '—',
                 telephone: data.resaTelephone || '—'
+            };
+
+            // Email au client
+            await emailjs.send('service_zjkkwye', 'template_t6h9q3c', emailData);
+
+            // Copie au propriétaire (même template)
+            await emailjs.send('service_zjkkwye', 'template_t6h9q3c', {
+                ...emailData,
+                email: 'centrederemiseenjoie@gmail.com'
             });
         } catch (e) {
             console.error('Erreur envoi email confirmation:', e);
@@ -315,6 +324,19 @@ async function handleContact() {
             console.error('Erreur envoi contact:', error);
             alert('Erreur lors de l\'envoi de votre message. Veuillez réessayer.');
             return;
+        }
+    }
+
+    // Notification au propriétaire
+    if (typeof emailjs !== 'undefined') {
+        try {
+            await emailjs.send('service_zjkkwye', 'template_blv5ohi', {
+                email: 'centrederemiseenjoie@gmail.com',
+                nom_prenom: data.nomPrenom,
+                message: `Nouveau message de ${data.nomPrenom} (${data.email}) :\n\n${data.message}`
+            });
+        } catch (e) {
+            console.error('Erreur envoi notification:', e);
         }
     }
 

@@ -1,3 +1,13 @@
+// Lazy load background video after page content is loaded
+window.addEventListener('load', function() {
+    const video = document.getElementById('bgVideo');
+    if (video) {
+        // Charger et démarrer la vidéo après le chargement de la page
+        video.load();
+        video.play().catch(e => console.log('Autoplay prevented:', e));
+    }
+});
+
 // Slideshow functionality
 let currentSlideIndex = 0;
 let previousSlideIndex = 0;

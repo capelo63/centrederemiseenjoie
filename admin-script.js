@@ -262,6 +262,9 @@ function showAddNewsForm() {
     document.getElementById('newsId').value = '';
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('newsDate').value = today;
+    document.getElementById('newsImage').value = '';
+    document.getElementById('newsImageFile').value = '';
+    document.getElementById('newsImagePreview').style.display = 'none';
     document.getElementById('newsForm').style.display = 'block';
 }
 
@@ -274,9 +277,31 @@ function editNews(id) {
         document.getElementById('newsDate').value = news.date;
         document.getElementById('newsResume').value = news.resume;
         document.getElementById('newsContenu').value = news.contenu;
-        document.getElementById('newsImage').value = news.image;
+        document.getElementById('newsImage').value = news.image || '';
+        document.getElementById('newsImageFile').value = '';
+        if (news.image) {
+            document.getElementById('newsImagePreviewImg').src = news.image;
+            document.getElementById('newsImagePreview').style.display = 'block';
+        } else {
+            document.getElementById('newsImagePreview').style.display = 'none';
+        }
         document.getElementById('newsForm').style.display = 'block';
     }
+}
+
+function previewNewsImage(input) {
+    if (!input.files || !input.files[0]) return;
+    compressImage(input.files[0], 800, 0.8).then(dataUrl => {
+        document.getElementById('newsImage').value = dataUrl;
+        document.getElementById('newsImagePreviewImg').src = dataUrl;
+        document.getElementById('newsImagePreview').style.display = 'block';
+    });
+}
+
+function clearNewsImage() {
+    document.getElementById('newsImage').value = '';
+    document.getElementById('newsImageFile').value = '';
+    document.getElementById('newsImagePreview').style.display = 'none';
 }
 
 async function handleNewsSave() {

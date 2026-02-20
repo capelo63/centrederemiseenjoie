@@ -101,16 +101,34 @@ function setupEventListeners() {
 
 // === AUTHENTICATION via Supabase REST ===
 
-function checkAuthStatus() {
+async function checkAuthStatus() {
     const stored = localStorage.getItem('supabaseAuth');
     if (stored) {
         try {
             const authData = JSON.parse(stored);
             if (authData.expires_at && authData.expires_at > Math.floor(Date.now() / 1000)) {
+                // Token encore valide
                 currentUser = authData.user;
                 accessToken = authData.access_token;
                 showAdminPanel();
                 return;
+            } else if (authData.refresh_token) {
+                // Token expiré : tentative de rafraîchissement
+                try {
+                    const data = await supabaseRest.refreshToken(authData.refresh_token);
+                    currentUser = data.user;
+                    accessToken = data.access_token;
+                    localStorage.setItem('supabaseAuth', JSON.stringify({
+                        user: data.user,
+                        access_token: data.access_token,
+                        refresh_token: data.refresh_token,
+                        expires_at: data.expires_at
+                    }));
+                    showAdminPanel();
+                    return;
+                } catch (e) {
+                    localStorage.removeItem('supabaseAuth');
+                }
             } else {
                 localStorage.removeItem('supabaseAuth');
             }
@@ -135,6 +153,7 @@ async function handleLogin() {
         localStorage.setItem('supabaseAuth', JSON.stringify({
             user: data.user,
             access_token: data.access_token,
+            refresh_token: data.refresh_token,
             expires_at: data.expires_at
         }));
 
@@ -162,6 +181,26 @@ function showAdminPanel() {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('adminPanel').style.display = 'flex';
     document.getElementById('welcomeUser').textContent = `Bienvenue, ${currentUser.email}`;
+
+    // Rafraîchir le token toutes les 50 minutes
+    setInterval(async () => {
+        const stored = localStorage.getItem('supabaseAuth');
+        if (!stored) return;
+        try {
+            const authData = JSON.parse(stored);
+            if (!authData.refresh_token) return;
+            const data = await supabaseRest.refreshToken(authData.refresh_token);
+            accessToken = data.access_token;
+            localStorage.setItem('supabaseAuth', JSON.stringify({
+                user: data.user,
+                access_token: data.access_token,
+                refresh_token: data.refresh_token,
+                expires_at: data.expires_at
+            }));
+        } catch (e) {
+            console.error('Échec du rafraîchissement du token:', e);
+        }
+    }, 50 * 60 * 1000);
 
     // Load data
     loadNewsData();

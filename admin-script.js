@@ -74,16 +74,6 @@ function setupEventListeners() {
         handleLogin();
     });
 
-    // News form
-    document.getElementById('actualiteForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        handleNewsSave();
-    });
-
-    // Set today's date as default for news
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('newsDate').value = today;
-
     // Programme forms
     document.getElementById('activiteForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -203,7 +193,6 @@ function showAdminPanel() {
     }, 50 * 60 * 1000);
 
     // Load data
-    loadNewsData();
     loadSampleData();
     loadTemoignagesData();
     loadProgrammeAdminData();

@@ -38,8 +38,7 @@
         </header>
 
         <nav class="admin-nav">
-            <button class="nav-btn active" onclick="showSection('actualites')">Actualités</button>
-            <button class="nav-btn" onclick="showSection('reservations')">Réservations</button>
+            <button class="nav-btn active" onclick="showSection('reservations')">Réservations</button>
             <button class="nav-btn" onclick="showSection('disponibilites')">Disponibilités</button>
             <button class="nav-btn" onclick="showSection('programme')">Programme</button>
             <button class="nav-btn" onclick="showSection('temoignages')">Témoignages</button>
@@ -48,68 +47,8 @@
         </nav>
 
         <main class="admin-content">
-            <!-- Section Actualités -->
-            <section id="actualites-section" class="admin-section active">
-                <div class="section-header">
-                    <h2>Gestion des Actualités</h2>
-                    <button class="btn-primary" onclick="showAddNewsForm()">Ajouter une actualité</button>
-                </div>
-
-                <div id="newsForm" class="form-container" style="display: none;">
-                    <h3 id="formTitle">Nouvelle actualité</h3>
-                    <form id="actualiteForm">
-                        <input type="hidden" id="newsId">
-                        <div class="form-group">
-                            <label for="newsTitre">Titre :</label>
-                            <input type="text" id="newsTitre" name="titre" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="newsDate">Date :</label>
-                            <input type="date" id="newsDate" name="date" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="newsResume">Résumé (pour la page d'accueil) :</label>
-                            <textarea id="newsResume" name="resume" rows="3" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="newsContenu">Contenu complet :</label>
-                            <textarea id="newsContenu" name="contenu" rows="6" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="newsImageFile">Image :</label>
-                            <input type="file" id="newsImageFile" accept="image/*" onchange="previewNewsImage(this)">
-                            <div id="newsImagePreview" style="margin-top:10px;display:none;">
-                                <img id="newsImagePreviewImg" src="" alt="Aperçu" style="max-width:300px;max-height:200px;border-radius:8px;object-fit:cover;">
-                                <button type="button" onclick="clearNewsImage()" style="display:block;margin-top:6px;background:none;border:none;color:#c00;cursor:pointer;font-size:0.9em;">Supprimer l'image</button>
-                            </div>
-                            <input type="hidden" id="newsImage" name="image">
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn-primary">Enregistrer</button>
-                            <button type="button" class="btn-secondary" onclick="hideNewsForm()">Annuler</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="news-list">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Titre</th>
-                                <th>Date</th>
-                                <th>Statut</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="newsTableBody">
-                            <!-- Les actualités seront chargées dynamiquement -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
             <!-- Section Réservations -->
-            <section id="reservations-section" class="admin-section">
+            <section id="reservations-section" class="admin-section active">
                 <div class="section-header">
                     <h2>Gestion des Réservations</h2>
                     <div class="filter-buttons">

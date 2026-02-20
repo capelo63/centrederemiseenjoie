@@ -76,8 +76,13 @@
                             <textarea id="newsContenu" name="contenu" rows="6" required></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="newsImage">URL de l'image :</label>
-                            <input type="url" id="newsImage" name="image" placeholder="https://exemple.com/image.jpg">
+                            <label for="newsImageFile">Image :</label>
+                            <input type="file" id="newsImageFile" accept="image/*" onchange="previewNewsImage(this)">
+                            <div id="newsImagePreview" style="margin-top:10px;display:none;">
+                                <img id="newsImagePreviewImg" src="" alt="Aperçu" style="max-width:300px;max-height:200px;border-radius:8px;object-fit:cover;">
+                                <button type="button" onclick="clearNewsImage()" style="display:block;margin-top:6px;background:none;border:none;color:#c00;cursor:pointer;font-size:0.9em;">Supprimer l'image</button>
+                            </div>
+                            <input type="hidden" id="newsImage" name="image">
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="btn-primary">Enregistrer</button>

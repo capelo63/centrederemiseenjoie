@@ -78,5 +78,19 @@ const supabaseRest = {
             throw new Error(err.error_description || err.msg || 'Identifiants incorrects');
         }
         return res.json();
+    },
+
+    // Rafraîchissement du token
+    async refreshToken(refreshToken) {
+        const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ refresh_token: refreshToken })
+        });
+        if (!res.ok) throw new Error('Session expirée');
+        return res.json();
     }
 };

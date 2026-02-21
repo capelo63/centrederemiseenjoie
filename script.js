@@ -66,14 +66,19 @@ if (!isMobile) {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
+    // Init EmailJS (chargé en defer)
+    if (typeof emailjs !== 'undefined') emailjs.init('Vtm7CrgdmlhwGYHb9');
+
     setupFormHandlers();
     createPlaceholderImages();
     setupVideoBackground();
     setupMobileMenu();
-    loadTestimonials();
-    loadProgrammeData();
     initializeCalendar();
-    initializeAvailabilitySystem();
+
+    // Appels Supabase différés pour ne pas bloquer le rendu initial
+    setTimeout(() => loadTestimonials(), 2000);
+    setTimeout(() => loadProgrammeData(), 2500);
+    setTimeout(() => initializeAvailabilitySystem(), 3000);
 });
 
 function setupFormHandlers() {
@@ -280,14 +285,14 @@ async function handleReservation() {
                 telephone: data.resaTelephone || '—'
             };
 
-            // Email au client
-            await emailjs.send('service_zjkkwye', 'template_t6h9q3c', emailData);
-
-            // Copie au propriétaire (même template)
-            await emailjs.send('service_zjkkwye', 'template_t6h9q3c', {
-                ...emailData,
-                email: 'centrederemiseenjoie@gmail.com'
-            });
+            // Email au client et copie au propriétaire en parallèle
+            await Promise.all([
+                emailjs.send('service_zjkkwye', 'template_t6h9q3c', emailData),
+                emailjs.send('service_zjkkwye', 'template_t6h9q3c', {
+                    ...emailData,
+                    email: 'centrederemiseenjoie@gmail.com'
+                })
+            ]);
         } catch (e) {
             console.error('Erreur envoi email confirmation:', e);
         }
@@ -1103,7 +1108,7 @@ function openProgrammeDetail(type, id) {
     } else if (type === 'pratique') {
         let mediaHtml = '';
         if (item.video_url) {
-            mediaHtml = `<video autoplay muted loop playsinline style="width:100%;border-radius:12px;margin-bottom:20px;max-height:350px;object-fit:cover;"><source src="${item.video_url}" type="video/webm"></video>`;
+            mediaHtml = `<video muted loop playsinline controls style="width:100%;border-radius:12px;margin-bottom:20px;max-height:350px;object-fit:cover;"><source src="${item.video_url}" type="video/webm"></video>`;
         } else if (item.image_url) {
             mediaHtml = `<img src="${item.image_url}" alt="${item.titre}" class="programme-detail-img">`;
         }
@@ -1153,7 +1158,7 @@ function renderPratiques() {
     grid.innerHTML = programmePratiques.map(p => {
         let mediaHtml = '';
         if (p.video_url) {
-            mediaHtml = `<video autoplay muted loop playsinline><source src="${p.video_url}" type="video/webm"></video>`;
+            mediaHtml = `<video muted loop playsinline><source src="${p.video_url}" type="video/webm"></video>`;
         } else if (p.image_url) {
             mediaHtml = `<img src="${p.image_url}" alt="${p.titre}" loading="lazy">`;
         }

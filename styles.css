@@ -70,7 +70,7 @@ body {
     cursor: pointer;
     z-index: 1001;
     transition: all 0.3s ease;
-    backdrop-filter: blur(5px);
+
 }
 
 .video-control:hover {
@@ -105,7 +105,7 @@ body {
 
 header {
     background: #bf8b37;
-    backdrop-filter: blur(15px);
+
     color: white;
     padding: 0.8rem 0;
     position: fixed;
@@ -166,7 +166,7 @@ nav {
     background: #966a20;
     padding: 0.5rem;
     border-radius: 25px;
-    backdrop-filter: blur(10px);
+
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -246,7 +246,7 @@ main {
     background: rgba(0, 0, 0, 0.2);
     padding: 1rem;
     border-radius: 8px;
-    backdrop-filter: blur(5px);
+
 }
 
 /* Three Columns Section */
@@ -256,7 +256,7 @@ main {
     gap: 3rem;
     padding: 4rem 2rem;
     background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+
     border-radius: 15px;
     margin: 2rem auto;
     max-width: 1200px;
@@ -357,7 +357,7 @@ main {
     border-radius: 15px;
     font-size: 0.8rem;
     font-weight: 500;
-    backdrop-filter: blur(5px);
+
     z-index: 2;
 }
 
@@ -424,7 +424,7 @@ main {
 .hosts-section {
     padding: 4rem 2rem;
     background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+
     border-radius: 15px;
     margin: 2rem auto;
     max-width: 1200px;
@@ -446,7 +446,7 @@ main {
     background: rgba(255, 255, 255, 0.7);
     border-radius: 15px;
     padding: 2rem;
-    backdrop-filter: blur(5px);
+
     border: 1px solid rgba(255, 255, 255, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     align-items: start;
@@ -545,7 +545,7 @@ main {
 /* Testimonials Section */
 .testimonials {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.95));
-    backdrop-filter: blur(10px);
+
     border-radius: 20px;
     padding: 4rem 2rem;
     margin: 3rem auto;
@@ -1258,7 +1258,7 @@ h3::after {
     border-radius: 15px;
     padding: 20px;
     margin: 20px 0;
-    backdrop-filter: blur(10px);
+
     border: 1px solid rgba(255,255,255,0.1);
 }
 
@@ -1331,7 +1331,7 @@ h3::after {
     border-radius: 15px;
     padding: 20px;
     margin: 20px 0;
-    backdrop-filter: blur(10px);
+
     border: 1px solid rgba(255,255,255,0.1);
 }
 
@@ -1523,7 +1523,7 @@ h3::after {
     border: 2px solid transparent;
     transition: all 0.3s ease;
     cursor: pointer;
-    backdrop-filter: blur(10px);
+
 }
 
 .hebergement-card:hover {
@@ -1635,7 +1635,7 @@ h3::after {
 
 footer {
     background-color: rgba(31, 87, 51, 0.95);
-    backdrop-filter: blur(10px);
+
     color: white;
     text-align: center;
     padding: 2rem;
@@ -2045,7 +2045,7 @@ footer {
 /* ===== Section Description du Lieu ===== */
 .lieu-description {
     background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+
     border-radius: 15px;
     padding: 4rem 2rem;
     margin: 2rem auto;
@@ -2134,7 +2134,7 @@ footer {
 /* ===== Section Programme ===== */
 .programme {
     background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+
     border-radius: 15px;
     padding: 4rem 2rem;
     margin: 2rem auto;
@@ -2434,7 +2434,7 @@ footer {
 /* ===== Section Hébergement Showcase ===== */
 .hebergement-section {
     background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+
     border-radius: 15px;
     padding: 4rem 2rem;
     margin: 2rem auto;

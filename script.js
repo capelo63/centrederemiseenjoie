@@ -337,7 +337,7 @@ async function handleContact() {
             });
         } catch (error) {
             console.error('Erreur envoi contact:', error);
-            alert('Erreur lors de l\'envoi de votre message. Veuillez réessayer.');
+            alert('Erreur Supabase : ' + error.message);
             return;
         }
     }

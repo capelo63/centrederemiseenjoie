@@ -149,6 +149,12 @@ nav {
     56% { transform: scale(1); }
 }
 
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
 .logo h1 {
     font-size: 1.6rem;
     font-weight: 400;
@@ -157,6 +163,15 @@ nav {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.logo-subtitle {
+    font-size: 0.95rem;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.82);
+    margin: 0;
+    letter-spacing: 0.3px;
 }
 
 .nav-links {
@@ -1699,6 +1714,10 @@ footer {
 
     .logo h1 {
         font-size: 1.3rem;
+    }
+
+    .logo-subtitle {
+        font-size: 0.82rem;
     }
 
     .menu-toggle {

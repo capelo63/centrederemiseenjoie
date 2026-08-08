@@ -336,9 +336,8 @@ async function handleContact() {
                 status: 'unread'
             });
         } catch (error) {
-            console.error('Erreur envoi contact:', error);
-            alert('Erreur Supabase : ' + error.message);
-            return;
+            console.error('Erreur sauvegarde contact Supabase:', error.message);
+            // On continue quand même pour envoyer l'email
         }
     }
 

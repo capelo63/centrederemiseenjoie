@@ -606,20 +606,20 @@ let accommodationData = {};
 const accommodationTypes = {
     tipi: {
         name: "Le Tipi",
-        capacity: 2,
-        description: "Hébergement authentique en pleine nature, idéal pour une expérience unique.",
+        capacity: 1,
+        description: "Refuge intime au cœur de la nature. 30€ la nuit.",
         baseAvailability: true
     },
     caravane: {
         name: "La Caravane",
         capacity: 2,
-        description: "Hébergement cosy et confortable avec tous les équipements nécessaires.",
+        description: "Parenthèse cosy et confortable, idéal pour une reconnexion à la simplicité. 40€ la nuit.",
         baseAvailability: true
     },
-    dortoir: {
-        name: "Le Dortoir du Chalet",
-        capacity: 5,
-        description: "Espace convivial et chaleureux parfait pour les groupes.",
+    caravane2: {
+        name: "La Caravane 2",
+        capacity: 2,
+        description: "Cocon douillet et chaleureux alliant confort et expérience immersive. 50€ la nuit.",
         baseAvailability: true
     }
 };
@@ -648,7 +648,7 @@ async function loadAvailabilityFromSupabase() {
                 accommodations: {
                     tipi: true,
                     caravane: true,
-                    dortoir: true
+                    caravane2: true
                 }
             };
         }

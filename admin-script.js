@@ -721,9 +721,9 @@ let adminCalendarDate = new Date();
 let confirmedReservations = [];
 
 const accommodationTypes = {
-    tipi: { name: 'Le Tipi', capacity: 2 },
+    tipi: { name: 'Le Tipi', capacity: 1 },
     caravane: { name: 'La Caravane', capacity: 2 },
-    dortoir: { name: 'Le Dortoir du Chalet', capacity: 5 }
+    caravane2: { name: 'La Caravane 2', capacity: 2 }
 };
 
 async function loadAvailabilitySection() {
@@ -770,7 +770,7 @@ function updateAvailabilityStats() {
     document.getElementById('statOccupation').textContent = occupationRate + '%';
 
     // Hébergement le plus demandé
-    const counts = { tipi: 0, caravane: 0, dortoir: 0 };
+    const counts = { tipi: 0, caravane: 0, caravane2: 0 };
     confirmedReservations.forEach(r => {
         if (r.hebergement_type && counts[r.hebergement_type] !== undefined) {
             counts[r.hebergement_type]++;

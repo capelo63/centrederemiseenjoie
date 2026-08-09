@@ -1703,21 +1703,26 @@ footer {
         background: #bf8b37;
     }
 
+    nav {
+        padding: 0 1rem;
+    }
+
     .logo {
-        gap: 0.7rem;
+        gap: 0.5rem;
     }
 
     .logo-image {
-        height: 80px;
+        height: 55px;
         max-width: none;
     }
 
     .logo h1 {
-        font-size: 1.3rem;
+        font-size: 1rem;
+        white-space: nowrap;
     }
 
     .logo-subtitle {
-        font-size: 0.82rem;
+        font-size: 0.75rem;
     }
 
     .menu-toggle {
@@ -1980,9 +1985,12 @@ footer {
         margin-bottom: 1.5rem;
     }
     
-    .radio-option label,
-    .checkbox-option label {
+    .radio-option label {
         padding: 0.8rem;
+    }
+
+    .checkbox-option label {
+        padding: 0.8rem 0.8rem 0.8rem 2.5rem;
     }
     
     .radio-option label strong {
